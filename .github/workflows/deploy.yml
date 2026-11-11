@@ -1,0 +1,127 @@
+# Deploy to cPanel over FTP (docs/DEPLOY.md).
+#
+# vendor/ and android_app/ are never uploaded — vendor/ goes up by hand as
+# vendor-production.zip (see build-vendor.yml). If composer.lock changed and
+# the server still has the old vendor, this workflow stops before uploading.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      migrate:
+        description: Run database migrations after the upload
+        type: boolean
+        default: true
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      # Not secret. The FTP account deploy@onukrom.com is locked to
+      # /home/bdgigsco/onukrom.com (the project folder); the domain's
+      # document root is /home/bdgigsco/onukrom.com/public.
+      APP_URL: https://onukrom.com
+      FTP_SERVER: bdgigs.com
+      FTP_USERNAME: deploy@onukrom.com
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo_sqlite, zip
+          coverage: none
+
+      # Needed only to build the frontend (Wayfinder reads the routes). Not uploaded.
+      - name: Install PHP packages for the build
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare a build .env
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          sed -i "s#^VITE_MAPBOX_TOKEN=.*#VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}#" .env
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Build the admin panel
+        run: |
+          npm ci
+          npm run build
+
+      # Only what the server needs. storage/ keeps just its empty folders
+      # (.gitignore files), so a fresh server gets the structure Laravel expects
+      # but nothing on the server (logs, sessions, uploads) is ever touched.
+      - name: Collect the files to upload
+        run: |
+          rsync -a ./ release/ \
+            --include='.gitignore' --include='/storage/**/' --exclude='/storage/**' \
+            --exclude='/release' --exclude='.git/' --exclude='.github/' \
+            --exclude='node_modules/' --exclude='/vendor/' --exclude='/android_app/' \
+            --exclude='/deploy/' --exclude='/docs/' --exclude='/tests/' \
+            --exclude='/resources/js/' --exclude='/resources/css/' \
+            --exclude='/bootstrap/cache/*.php' --exclude='/database/*.sqlite' \
+            --exclude='/.env' --exclude='/.env.*' --exclude='/public/hot' \
+            --exclude='/*.md' --exclude='/phpunit.xml' --exclude='/.editorconfig' \
+            --exclude='/.prettier*' --exclude='/eslint.config.*' --exclude='/.claude/' \
+            --exclude='.ftp-deploy-sync-state.json'
+          test -f release/bootstrap/cache/.gitignore
+          test -f release/storage/logs/.gitignore
+          test -f release/public/index.php
+          test -d release/public/build
+          test ! -e release/vendor && test ! -e release/.env && test ! -e release/android_app
+          echo "Files to upload: $(find release -type f | wc -l)"
+
+      - name: Check the server has the matching vendor/
+        run: |
+          expected=$(php deploy/lock-hash.php composer.lock)
+          status=$(curl -fsS -H "X-Deploy-Token: $DEPLOY_TOKEN" "$APP_URL/api/_deploy/status" || true)
+          if [ -z "$status" ]; then
+            echo "::warning::Deploy hook not reachable (first deploy?) — skipping the vendor check."
+            exit 0
+          fi
+          current=$(echo "$status" | jq -r '.vendor_lock_hash // empty')
+          if [ "$current" != "$expected" ]; then
+            echo "::error::composer.lock changed since the vendor/ on the server was built. Run 'Build vendor zip', upload and extract it on the server, then re-run this deploy."
+            exit 1
+          fi
+          echo "vendor/ on the server matches composer.lock ($expected)."
+
+      - name: Maintenance mode on
+        run: |
+          curl -fsS -X POST -H "X-Deploy-Token: $DEPLOY_TOKEN" "$APP_URL/api/_deploy/down" || echo "::warning::Could not switch on maintenance mode (first deploy?)."
+
+      - name: Upload over FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ env.FTP_SERVER }}
+          username: ${{ env.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./release/
+          server-dir: ./
+
+      - name: Clear caches, migrate and go back online
+        run: |
+          migrate=${{ (github.event_name == 'push' || inputs.migrate) && '1' || '0' }}
+          curl -sS -X POST -H "X-Deploy-Token: $DEPLOY_TOKEN" -o result.json -w '%{http_code}' \
+            "$APP_URL/api/_deploy/refresh?migrate=$migrate" > code.txt || true
+          jq . result.json 2>/dev/null || cat result.json
+          [ "$(cat code.txt)" = "200" ] || { echo "::error::Refresh hook answered HTTP $(cat code.txt)."; exit 1; }
+
+      - name: If something failed
+        if: failure()
+        run: |
+          echo "::error::The site may still be in maintenance mode. Fix the problem and re-run this workflow — the last step brings it back online."

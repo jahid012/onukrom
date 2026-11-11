@@ -43,3 +43,10 @@ yarn-error.log
 /boost.json
 /opencode.json
 /opencode.jsonc
+
+# Deploy: production vendor build (uploaded by hand, never committed)
+/deploy/vendor-build
+/deploy/*.zip
+.ftp-deploy-sync-state.json
+/deploy/production.env
+/deploy/SECRETS.txt

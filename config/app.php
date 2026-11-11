@@ -97,6 +97,12 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    /*
+    | Shared secret for the deploy hooks (/api/_deploy/*). Empty = hooks disabled.
+    */
+
+    'deploy_token' => env('DEPLOY_TOKEN'),
+
     'key' => env('APP_KEY'),
 
     'previous_keys' => [

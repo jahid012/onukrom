@@ -1,0 +1,33 @@
+# Builds vendor-production.zip on Linux (same as the server) for manual upload.
+# Actions → "Build vendor zip" → Run workflow → download the artifact.
+name: Build vendor zip
+
+on:
+  workflow_dispatch:
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo_mysql, zip
+          coverage: none
+
+      - name: Install production packages
+        run: composer install --no-dev --no-scripts --no-interaction --prefer-dist --no-progress --optimize-autoloader
+
+      - name: Mark which composer.lock this vendor/ belongs to
+        run: php deploy/lock-hash.php composer.lock > vendor/.lock-hash
+
+      - name: Zip
+        run: zip -qr vendor-production.zip vendor
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vendor-production
+          path: vendor-production.zip
+          retention-days: 14

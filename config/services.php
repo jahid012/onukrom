@@ -35,7 +35,6 @@ return [
         ],
     ],
 
-
     // Alpha SMS (sms.net.bd) — invites and password resets.
     'alpha_sms' => [
         'key' => env('ALPHA_SMS_API_KEY'),

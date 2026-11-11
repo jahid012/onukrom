@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'locale']);
 
+        // The deploy pipeline must reach these while the site is in maintenance mode.
+        $middleware->preventRequestsDuringMaintenance(except: ['api/_deploy/*']);
+
         $middleware->web(append: [
             SetLocale::class,
             TenantFromUser::class,

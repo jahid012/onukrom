@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\SyncPullController;
 use App\Http\Controllers\Api\V1\SyncPushController;
+use App\Http\Controllers\DeployController;
 use App\Http\Middleware\ResolveApiTenant;
 use Illuminate\Support\Facades\Route;
 
@@ -25,4 +26,14 @@ Route::prefix('v1')->group(function () {
             Route::post('sync/push', SyncPushController::class)->middleware('throttle:60,1');
         });
     });
+});
+
+/*
+| Deploy hooks for the CI/CD pipeline (cPanel has no SSH). Token-protected;
+| see app/Http/Controllers/DeployController.php and docs/DEPLOY.md.
+*/
+Route::prefix('_deploy')->middleware('throttle:10,1')->group(function () {
+    Route::get('status', [DeployController::class, 'status']);
+    Route::post('down', [DeployController::class, 'down']);
+    Route::post('refresh', [DeployController::class, 'refresh']);
 });
