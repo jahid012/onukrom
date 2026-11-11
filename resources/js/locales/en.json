@@ -1,0 +1,330 @@
+{
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "continue": "Continue",
+        "back": "Back",
+        "confirm": "Confirm",
+        "close": "Close",
+        "remove": "Remove",
+        "language": "Language",
+        "switchLanguage": "Change language",
+        "lightMode": "Switch to light mode",
+        "darkMode": "Switch to dark mode",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password"
+    },
+    "nav": {
+        "groups": {
+            "overview": "Overview",
+            "sales": "Sales",
+            "customers": "Customers",
+            "catalog": "Catalog",
+            "team": "Team"
+        },
+        "dashboard": "Dashboard",
+        "reports": "Reports",
+        "orders": "Orders",
+        "deliveries": "Deliveries",
+        "collections": "Collections",
+        "returns": "Returns",
+        "shops": "Shops",
+        "areas": "Areas & routes",
+        "products": "Products",
+        "pricing": "Pricing",
+        "stock": "Stock",
+        "staff": "Staff",
+        "roles": "Roles & permissions",
+        "settings": "Settings"
+    },
+    "header": {
+        "search": "Search shops, orders, staff…",
+        "notifications": "Notifications, {{n}} unread",
+        "noResults": "Nothing found for “{{q}}”",
+        "notificationsTitle": "Notifications",
+        "markRead": "Mark all as read",
+        "notification": {
+            "order": "{{n}} orders are waiting for approval",
+            "location": "Order {{order}} was placed with fake GPS",
+            "deposit": "{{name}} handed in cash — confirm the deposit",
+            "shop": "{{n}} new shops added from the field",
+            "stock": "{{n}} products are low in stock"
+        }
+    },
+    "plan": {
+        "name": "{{plan}} plan",
+        "starter": "Starter",
+        "code": "Code: {{code}}",
+        "staff": "Staff",
+        "sms": "SMS this month"
+    },
+    "user": {
+        "settings": "My profile",
+        "logout": "Log out"
+    },
+    "period": {
+        "7d": "Last 7 days",
+        "30d": "Last 30 days",
+        "12m": "This year"
+    },
+    "time": {
+        "minAgo": "{{n}} min ago",
+        "hoursAgo": "{{n}} h ago"
+    },
+    "units": {
+        "ctn": "{{n}} ctn"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "greeting": {
+            "morning": "Good morning, {{name}}",
+            "afternoon": "Good afternoon, {{name}}",
+            "evening": "Good evening, {{name}}"
+        },
+        "periodLabel": "Period",
+        "updated": "Updated {{time}}",
+        "refreshed": "Dashboard refreshed",
+        "kpi": {
+            "sales": "Sales (ordered)",
+            "orders": "Orders",
+            "collections": "Collections",
+            "dues": "Outstanding dues",
+            "salesHint": "{{period}} · vs previous",
+            "ordersHint": "Avg order {{amount}}",
+            "collectionsHint": "{{pct}} of delivered value",
+            "duesHint": "{{shops}} shops · {{over}} over limit"
+        },
+        "trend": {
+            "title": "Sales trend",
+            "subtitle": "{{period}} · ordered vs delivered value",
+            "ordered": "Ordered",
+            "delivered": "Delivered",
+            "rate": "{{pct}} delivered"
+        },
+        "attention": {
+            "title": "Needs your attention",
+            "subtitle": "Things waiting on the office",
+            "items": {
+                "approve": {
+                    "title": "Orders waiting for approval",
+                    "detail": "{{amount}} · oldest {{hours}} h ago",
+                    "action": "Review"
+                },
+                "cash": {
+                    "title": "Cash with staff, not deposited",
+                    "detail": "{{amount}} with {{staff}} staff",
+                    "action": "Confirm"
+                },
+                "failed": {
+                    "title": "Failed deliveries to reschedule",
+                    "detail": "Shop closed · no money",
+                    "action": "Reschedule"
+                },
+                "shops": {
+                    "title": "New shops to approve",
+                    "detail": "Added by SRs from the field",
+                    "action": "Approve"
+                },
+                "stock": {
+                    "title": "Products low in stock",
+                    "detail": "Below reorder level",
+                    "action": "View"
+                },
+                "location": {
+                    "title": "Orders with location issues",
+                    "detail": "{{far}} far from shop · {{mock}} fake GPS",
+                    "action": "Review"
+                },
+                "offline": {
+                    "title": "Staff not synced for 24 h+",
+                    "detail": "{{names}}",
+                    "action": "Check"
+                }
+            },
+            "allClear": "All clear — nothing is waiting for you."
+        },
+        "pipeline": {
+            "title": "Today's order flow",
+            "subtitle": "From the SR's phone to the shop's door",
+            "pending": "Pending approval",
+            "approved": "Approved",
+            "dispatched": "On delivery",
+            "delivered": "Delivered today",
+            "partial": "Partially delivered",
+            "failed": "Failed",
+            "cancelled": "Cancelled"
+        },
+        "team": {
+            "title": "Field team today",
+            "subtitleSr": "Sales reps — visits, orders and sales",
+            "subtitleDm": "Delivery men — trips and cash collected",
+            "tabSr": "Sales reps",
+            "tabDm": "Delivery men",
+            "salesRep": "Sales rep",
+            "deliveryMan": "Delivery man",
+            "route": "Route",
+            "visits": "Visits",
+            "orders": "Orders",
+            "sales": "Sales",
+            "trip": "Trip",
+            "delivered": "Delivered",
+            "cash": "Cash collected",
+            "lastSync": "Last sync"
+        },
+        "activity": {
+            "title": "Field activity",
+            "subtitle": "Today, all routes",
+            "onDuty": "Staff on duty",
+            "onDutyNote": "{{n}} not started day",
+            "coverage": "Route coverage",
+            "coverageNote": "{{visited}} of {{planned}} planned shops visited",
+            "strike": "Strike rate",
+            "strikeNote": "{{orders}} orders from {{visits}} visits · avg {{avg}}"
+        },
+        "products": {
+            "title": "Top products",
+            "subtitle": "This month by sales value"
+        },
+        "collections": {
+            "title": "Collections by method",
+            "subtitle": "This month",
+            "total": "Total collected",
+            "cashWithStaff": "Cash with staff (not deposited)",
+            "methods": {
+                "cash": "Cash",
+                "bkash": "bKash",
+                "nagad": "Nagad",
+                "bank": "Bank / cheque"
+            }
+        },
+        "shops": {
+            "title": "Shops",
+            "subtitle": "Customer base health",
+            "total": "Total shops",
+            "active": "active",
+            "active30d": "Ordered in last 30 days",
+            "noOrder30d": "No order in 30 days",
+            "withDue": "Shops with dues",
+            "overLimit": "Over credit limit",
+            "newThisMonth": "New this month",
+            "pendingApproval": "Waiting for approval"
+        }
+    },
+    "auth": {
+        "email": "Email address",
+        "emailShort": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "name": "Name",
+        "fullName": "Full name",
+        "login": {
+            "head": "Log in",
+            "title": "Log in to your account",
+            "description": "Enter your email and password below to log in",
+            "forgot": "Forgot your password?",
+            "remember": "Remember me",
+            "submit": "Log in"
+        },
+        "forgot": {
+            "head": "Forgot password",
+            "title": "Forgot password",
+            "description": "Enter your email to receive a password reset link",
+            "submit": "Email password reset link",
+            "returnTo": "Or, return to",
+            "login": "log in"
+        },
+        "reset": {
+            "head": "Reset password",
+            "title": "Reset password",
+            "description": "Please enter your new password below",
+            "submit": "Reset password"
+        },
+        "verify": {
+            "head": "Email verification",
+            "title": "Email verification",
+            "description": "Please verify your email address by clicking on the link we just emailed to you.",
+            "sent": "A new verification link has been sent to the email address you provided during registration.",
+            "resend": "Resend verification email",
+            "logout": "Log out"
+        },
+        "confirm": {
+            "head": "Confirm password",
+            "title": "Confirm password",
+            "description": "This is a secure area of the application. Please confirm your password before continuing.",
+            "submit": "Confirm password"
+        },
+        "twoFactor": {
+            "head": "Two-factor authentication",
+            "codeTitle": "Authentication code",
+            "codeDescription": "Enter the authentication code provided by your authenticator application.",
+            "recoveryTitle": "Recovery code",
+            "recoveryDescription": "Please confirm access to your account by entering one of your emergency recovery codes.",
+            "useRecovery": "login using a recovery code",
+            "useCode": "login using an authentication code",
+            "orYouCan": "or you can",
+            "recoveryPlaceholder": "Enter recovery code"
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "description": "Manage your profile and account settings",
+        "nav": {
+            "profile": "Profile",
+            "security": "Security",
+            "appearance": "Appearance & language"
+        },
+        "profile": {
+            "head": "Profile settings",
+            "title": "Profile",
+            "description": "Update your name and email address",
+            "unverified": "Your email address is unverified.",
+            "resend": "Click here to re-send the verification email.",
+            "sent": "A new verification link has been sent to your email address."
+        },
+        "security": {
+            "head": "Security settings",
+            "title": "Update password",
+            "description": "Ensure your account is using a long, random password to stay secure",
+            "current": "Current password",
+            "new": "New password"
+        },
+        "appearance": {
+            "head": "Appearance settings",
+            "title": "Appearance",
+            "description": "Update the appearance settings for your account",
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System",
+            "languageTitle": "Language",
+            "languageDescription": "Choose the language of the admin panel"
+        },
+        "twoFactor": {
+            "title": "Two-factor authentication",
+            "description": "Manage your two-factor authentication settings",
+            "enabledText": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
+            "disabledText": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
+            "disable": "Disable 2FA",
+            "enable": "Enable 2FA",
+            "continueSetup": "Continue setup",
+            "modal": {
+                "enabledTitle": "Two-factor authentication enabled",
+                "enabledDescription": "Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.",
+                "verifyTitle": "Verify authentication code",
+                "verifyDescription": "Enter the 6-digit code from your authenticator app",
+                "enableTitle": "Enable two-factor authentication",
+                "enableDescription": "To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app",
+                "manual": "or, enter the code manually"
+            },
+            "recovery": {
+                "title": "2FA recovery codes",
+                "description": "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
+                "view": "View recovery codes",
+                "hide": "Hide recovery codes",
+                "regenerate": "Regenerate codes",
+                "list": "Recovery codes",
+                "loading": "Loading recovery codes",
+                "note": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click Regenerate codes above."
+            }
+        }
+    }
+}

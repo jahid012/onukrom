@@ -1,0 +1,40 @@
+{
+    "title": "Products",
+    "description": "Your catalog as the sales reps see it on their phones",
+    "search": "Search name, Bangla name or SKU…",
+    "add": "Add product",
+    "syncNote": "Changes reach the app automatically on the next sync.",
+    "columns": {
+        "product": "Product",
+        "category": "Category",
+        "pack": "Pack",
+        "mrp": "MRP",
+        "price": "Price (default)",
+        "stock": "Available",
+        "active": "Active"
+    },
+    "perCtn": "{{amount}} / ctn",
+    "outOfStock": "Out of stock",
+    "form": {
+        "addTitle": "Add product",
+        "editTitle": "Edit product",
+        "name": "Product name",
+        "nameBn": "Name in Bangla",
+        "brand": "Brand",
+        "packSize": "Pieces per carton",
+        "packHelp": "Used to show quantities as cartons + pieces",
+        "mrp": "MRP per piece (৳)",
+        "price": "Price per piece (৳)",
+        "priceHelp": "Default price list",
+        "reorder": "Reorder level (pieces)",
+        "reorderHelp": "Low-stock warning below this",
+        "skuTaken": "This SKU is already used",
+        "overMrp": "Price can't be higher than MRP"
+    },
+    "toast": {
+        "added": "{{name}} added",
+        "updated": "{{name}} saved",
+        "activated": "{{name}} is visible in the app",
+        "deactivated": "{{name}} is hidden from the app"
+    }
+}

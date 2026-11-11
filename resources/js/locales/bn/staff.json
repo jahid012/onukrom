@@ -1,0 +1,71 @@
+{
+    "title": "কর্মী",
+    "description": "সেলস রিপ ও ডেলিভারি ম্যান যোগ করুন, তাদের ফোন ও পাসওয়ার্ড পরিচালনা করুন",
+    "invite": "কর্মী যোগ করুন",
+    "search": "নাম, কোড বা ফোন খুঁজুন…",
+    "seats": "{{limit}}টি কর্মী সিটের মধ্যে {{used}}টি ব্যবহৃত",
+    "tabs": {
+        "field": "মাঠকর্মী",
+        "office": "অফিস",
+        "all": "সব"
+    },
+    "columns": {
+        "person": "নাম",
+        "roles": "রোল",
+        "areas": "রুট",
+        "device": "ফোন",
+        "sync": "শেষ সিঙ্ক",
+        "status": "অবস্থা"
+    },
+    "noAreas": "কোনো রুট নেই",
+    "office": "অফিস ব্যবহারকারী",
+    "reset": "পাসওয়ার্ড রিসেট",
+    "resetDone": "{{name}}-কে SMS-এ নতুন পাসওয়ার্ড পাঠানো হবে",
+    "inviteDialog": {
+        "title": "কর্মী যোগ করুন",
+        "description": "আমরা একটি পাসওয়ার্ড তৈরি করে SMS-এ পাঠাব। পরে তারা অ্যাপে এটি বদলাতে পারবেন।",
+        "phone": "মোবাইল নম্বর",
+        "code": "কর্মী কোড",
+        "role": "রোল",
+        "route": "রুট",
+        "send": "যোগ করুন ও SMS পাঠান",
+        "doneTitle": "আমন্ত্রণ পাঠানো হয়েছে",
+        "doneDescription": "{{name}} এখন Onukrom অ্যাপে লগ ইন করতে পারবেন।",
+        "password": "তৈরি করা পাসওয়ার্ড",
+        "copy": "কপি",
+        "copied": "পাসওয়ার্ড কপি হয়েছে",
+        "once": "এই পাসওয়ার্ড শুধু একবার দেখানো হবে। এটি এনক্রিপ্ট করে রাখা হয়, আর দেখা যাবে না।",
+        "smsTitle": "{{phone}} নম্বরে পাঠানো SMS",
+        "sms": "Onukrom: You are added to {{company}}.\nCompany code: {{code}}\nPhone: {{phone}}\nPassword: {{password}}\nApp: https://onukrom.com/app"
+    },
+    "notLoggedIn": "এখনো লগ ইন করেননি",
+    "revoke": "ফোন থেকে লগ আউট",
+    "deactivate": "নিষ্ক্রিয় করুন",
+    "activate": "সক্রিয় করুন",
+    "form": {
+        "editTitle": "{{name}} সম্পাদনা",
+        "codeTaken": "এই কোড আগে থেকেই ব্যবহৃত",
+        "appUser": "মোবাইল অ্যাপ ব্যবহার করবেন",
+        "webUser": "এই ওয়েব প্যানেল ব্যবহার করবেন",
+        "alsoDm": "অর্ডার ডেলিভারিও দেন (ডেলিভারি ম্যান)",
+        "routes": "রুট",
+        "routesHelp": "এই রুটগুলোর দোকান তার ফোনে সিঙ্ক হবে"
+    },
+    "resetDialog": {
+        "title": "{{name}}-এর পাসওয়ার্ড রিসেট করবেন?",
+        "description": "নতুন পাসওয়ার্ড তৈরি হয়ে SMS-এ যাবে। তার ফোন থেকে লগ আউট হবে।",
+        "doneTitle": "নতুন পাসওয়ার্ড পাঠানো হয়েছে",
+        "doneDescription": "{{name}}-কে নতুন পাসওয়ার্ড দিয়ে আবার লগ ইন করতে হবে।",
+        "sms": "Onukrom: Your password was reset.\nCompany code: {{code}}\nPhone: {{phone}}\nNew password: {{password}}"
+    },
+    "revokeDialog": {
+        "title": "{{name}}-এর ফোন থেকে লগ আউট করবেন?",
+        "description": "সিঙ্ক না হওয়া অর্ডার ফোনেই থাকবে এবং আবার লগ ইনের পর পাঠানো হবে।"
+    },
+    "toast": {
+        "updated": "{{name}} সংরক্ষিত",
+        "deactivated": "{{name}} নিষ্ক্রিয় ও লগ আউট করা হয়েছে",
+        "activated": "{{name}} সক্রিয় করা হয়েছে",
+        "revoked": "{{name}} লগ আউট হয়েছেন"
+    }
+}

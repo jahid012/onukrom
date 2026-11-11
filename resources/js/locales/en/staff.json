@@ -1,0 +1,71 @@
+{
+    "title": "Staff",
+    "description": "Invite sales reps and delivery men, manage their phones and passwords",
+    "invite": "Invite staff",
+    "search": "Search name, code or phone…",
+    "seats": "{{used}} of {{limit}} staff seats used",
+    "tabs": {
+        "field": "Field staff",
+        "office": "Office",
+        "all": "All"
+    },
+    "columns": {
+        "person": "Name",
+        "roles": "Role",
+        "areas": "Routes",
+        "device": "Phone",
+        "sync": "Last sync",
+        "status": "Status"
+    },
+    "noAreas": "No route assigned",
+    "office": "Office user",
+    "reset": "Reset password",
+    "resetDone": "A new password will be sent to {{name}} by SMS",
+    "inviteDialog": {
+        "title": "Invite staff",
+        "description": "We create a password and send it by SMS. They can change it later in the app.",
+        "phone": "Mobile number",
+        "code": "Employee code",
+        "role": "Role",
+        "route": "Route",
+        "send": "Invite & send SMS",
+        "doneTitle": "Invitation sent",
+        "doneDescription": "{{name}} can now log in to the Onukrom app.",
+        "password": "Generated password",
+        "copy": "Copy",
+        "copied": "Password copied",
+        "once": "This password is shown only once. It is stored encrypted and cannot be viewed again.",
+        "smsTitle": "SMS sent to {{phone}}",
+        "sms": "Onukrom: You are added to {{company}}.\nCompany code: {{code}}\nPhone: {{phone}}\nPassword: {{password}}\nApp: https://onukrom.com/app"
+    },
+    "notLoggedIn": "Not logged in yet",
+    "revoke": "Sign out phone",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "form": {
+        "editTitle": "Edit {{name}}",
+        "codeTaken": "This code is already used",
+        "appUser": "Uses the mobile app",
+        "webUser": "Uses this web panel",
+        "alsoDm": "Also delivers orders (Delivery Man)",
+        "routes": "Routes",
+        "routesHelp": "Shops on these routes are synced to the person's phone"
+    },
+    "resetDialog": {
+        "title": "Reset {{name}}'s password?",
+        "description": "A new password is created and sent by SMS. Their phone is signed out.",
+        "doneTitle": "New password sent",
+        "doneDescription": "{{name}} must log in again with the new password.",
+        "sms": "Onukrom: Your password was reset.\nCompany code: {{code}}\nPhone: {{phone}}\nNew password: {{password}}"
+    },
+    "revokeDialog": {
+        "title": "Sign out {{name}}'s phone?",
+        "description": "Unsynced orders stay on the phone and are sent after they log in again."
+    },
+    "toast": {
+        "updated": "{{name}} saved",
+        "deactivated": "{{name}} deactivated and signed out",
+        "activated": "{{name}} activated",
+        "revoked": "{{name}} was signed out"
+    }
+}

@@ -1,0 +1,54 @@
+{
+    "title": "Pricing",
+    "description": "Price lists for shop types and areas — the app picks the right one for every shop",
+    "bulk": "Bulk price update",
+    "newList": "New price list",
+    "default": "Default",
+    "appliesDefault": "Used when no other list matches",
+    "applies": {
+        "shop_category": "Shop type: {{target}}",
+        "area": "Area: {{target}}"
+    },
+    "listMeta": "{{products}} products · {{shops}} shops",
+    "updated": "Last changed {{when}}",
+    "history": "Price history",
+    "offlineNote": "Orders taken offline keep the old price for up to {{hours}} hours after a change; after that the server reprices and flags them.",
+    "columns": {
+        "product": "Product",
+        "mrp": "MRP",
+        "default": "Default price",
+        "price": "This list (per pc)",
+        "ctn": "Per ctn",
+        "diff": "vs default"
+    },
+    "defaultNote": "Prices here are the products' own prices",
+    "historyTitle": "Price history — {{list}}",
+    "noHistory": "No changes yet.",
+    "edit": {
+        "title": "Price for {{product}}",
+        "description": "In the {{list}} list. The app uses the new price after the next sync.",
+        "perPc": "Price per piece (৳)",
+        "current": "Current"
+    },
+    "bulkDialog": {
+        "title": "Bulk price update",
+        "description": "Change every price in {{list}} by a percentage.",
+        "percent": "Change (%)",
+        "percentHelp": "Use a minus sign to lower prices, e.g. -3",
+        "apply": "Apply"
+    },
+    "newDialog": {
+        "description": "Shops matching this list get its prices instead of the default list.",
+        "name": "Name",
+        "nameBn": "Name in Bangla",
+        "appliesTo": "Applies to",
+        "shopType": "Shop type",
+        "area": "Route / area",
+        "note": "It starts with the default prices — edit the ones that differ."
+    },
+    "toast": {
+        "saved": "{{product}} now {{price}}",
+        "bulk": "Prices changed by {{percent}}",
+        "created": "Price list {{name}} created"
+    }
+}

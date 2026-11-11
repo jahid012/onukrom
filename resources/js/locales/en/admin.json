@@ -1,0 +1,136 @@
+{
+    "actions": {
+        "export": "Export",
+        "import": "Import Excel",
+        "print": "Print",
+        "add": "Add",
+        "approve": "Approve",
+        "reject": "Reject",
+        "save": "Save changes",
+        "cancel": "Cancel",
+        "view": "View",
+        "edit": "Edit",
+        "assignTrip": "Assign to trip",
+        "clearSelection": "Clear selection",
+        "confirm": "Confirm",
+        "verify": "Verify",
+        "download": "Download",
+        "more": "More actions"
+    },
+    "table": {
+        "showing": "Showing {{from}}–{{to}} of {{total}}",
+        "previous": "Previous",
+        "next": "Next",
+        "selected": "{{n}} selected",
+        "empty": "Nothing matches these filters",
+        "emptyHelp": "Try a different search or clear the filters.",
+        "selectAll": "Select all rows",
+        "selectRow": "Select row",
+        "actions": "Actions"
+    },
+    "filters": {
+        "search": "Search…",
+        "allSr": "All sales reps",
+        "allRoutes": "All routes",
+        "allCategories": "All categories",
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "last7": "Last 7 days",
+        "thisMonth": "This month",
+        "locationIssues": "Location issues",
+        "anyDate": "Any date"
+    },
+    "time": {
+        "justNow": "just now",
+        "minAgo": "{{n}} min ago",
+        "hoursAgo": "{{n}} h ago",
+        "daysAgo": "{{n}} d ago"
+    },
+    "orderStatus": {
+        "pending": "Pending approval",
+        "approved": "Approved",
+        "dispatched": "On delivery",
+        "delivered": "Delivered",
+        "partially_delivered": "Partially delivered",
+        "failed": "Failed",
+        "cancelled": "Cancelled",
+        "rejected": "Rejected"
+    },
+    "orderFlag": {
+        "far_from_shop": "Far from shop",
+        "low_accuracy": "Low GPS accuracy",
+        "mock": "Fake GPS",
+        "no_location": "No location",
+        "price_changed": "Price changed",
+        "over_credit": "Over credit limit",
+        "over_stock": "More than stock"
+    },
+    "method": {
+        "cash": "Cash",
+        "bkash": "bKash",
+        "nagad": "Nagad",
+        "rocket": "Rocket",
+        "bank": "Bank",
+        "cheque": "Cheque"
+    },
+    "role": {
+        "owner": "Owner",
+        "manager": "Manager",
+        "sr": "Sales Rep",
+        "dm": "Delivery Man"
+    },
+    "userStatus": {
+        "active": "Active",
+        "invited": "Invited",
+        "inactive": "Inactive"
+    },
+    "shopStatus": {
+        "active": "Active",
+        "pending_approval": "Waiting for approval",
+        "inactive": "Inactive"
+    },
+    "shopCategory": {
+        "grocery": "Grocery",
+        "pharmacy": "Pharmacy",
+        "wholesale": "Wholesale",
+        "tea_stall": "Tea stall"
+    },
+    "day": {
+        "sat": "Sat",
+        "sun": "Sun",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri"
+    },
+    "unit": {
+        "ctn": "{{n}} ctn",
+        "pcs": "{{n}} pcs",
+        "mixed": "{{ctn}} ctn + {{pcs}} pcs",
+        "packOf": "ctn of {{n}}"
+    },
+    "map": {
+        "order": "Order location",
+        "shop": "Shop",
+        "staff": "Staff",
+        "trail": "Visit trail",
+        "caption": "Map preview"
+    },
+    "form": {
+        "required": "Required",
+        "phone": "Use a mobile number like 01712-345678",
+        "positive": "Must be more than 0"
+    },
+    "sync": {
+        "loading": "Loading your company data…",
+        "retry": "Try again",
+        "offline": "No internet — the change was not saved.",
+        "expired": "Your session expired. Reload the page and log in again.",
+        "failed": "Could not save. Please try again.",
+        "load": {
+            "network": "Could not load the data. Check the internet connection.",
+            "forbidden": "This account cannot use the office panel. Sales reps and delivery men use the phone app."
+        }
+    }
+}

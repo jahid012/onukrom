@@ -1,0 +1,65 @@
+{
+    "title": "Deliveries & trips",
+    "description": "Plan trips for delivery men, print load sheets and follow cash on the road",
+    "newTrip": "New trip",
+    "stats": {
+        "trips": "Active trips",
+        "tripsNote": "Planned, loaded or on the road",
+        "orders": "Orders on these trips",
+        "expected": "Cash expected",
+        "collected": "Cash collected so far"
+    },
+    "tripsTitle": "Trips",
+    "tripsSubtitle": "Select a trip to see its load sheet",
+    "columns": {
+        "trip": "Trip",
+        "dm": "Delivery man",
+        "route": "Route",
+        "progress": "Delivered",
+        "cash": "Cash",
+        "status": "Status"
+    },
+    "status": {
+        "planned": "Planned",
+        "loaded": "Loaded",
+        "in_progress": "On the road",
+        "closed": "Closed"
+    },
+    "failed": "{{n}} failed",
+    "ofExpected": "of {{amount}}",
+    "waitingTitle": "Approved, waiting for a trip",
+    "waitingSubtitle": "Grouped by route",
+    "waitingLine": "{{orders}} orders · {{value}}",
+    "createTrip": "Create trip",
+    "loadSheet": "Load sheet — {{trip}}",
+    "loadSheetNote": "Total to pick up from the godown for {{orders}} orders",
+    "markLoaded": "Mark loaded",
+    "start": "Start trip",
+    "close": "Close trip",
+    "noneWaiting": "No approved orders are waiting.",
+    "emptySheet": "No products on this trip yet.",
+    "toast": {
+        "loaded": "{{trip}} is loaded",
+        "started": "{{trip}} is on the road",
+        "created": "Trip {{trip}} created with {{n}} order(s)",
+        "closed": "{{trip}} closed — deposit waiting in Collections"
+    },
+    "new": {
+        "title": "New trip",
+        "description": "Pick a route, a delivery man and the approved orders to deliver.",
+        "vehicle": "Vehicle",
+        "orders": "Approved orders on this route ({{n}})",
+        "noOrders": "No approved orders on this route.",
+        "total": "Total to collect:",
+        "submit": "Create trip ({{n}})"
+    },
+    "closeDialog": {
+        "title": "Close {{trip}}",
+        "description": "Count the cash {{name}} handed in.",
+        "cash": "Cash handed in (৳)",
+        "help": "bKash, Nagad and bank payments are confirmed separately in Collections.",
+        "short": "{{amount}} short of the expected amount",
+        "extra": "{{amount}} more than expected",
+        "note": "A deposit is created for the office to confirm in"
+    }
+}

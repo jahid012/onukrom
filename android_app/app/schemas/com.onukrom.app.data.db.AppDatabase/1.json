@@ -1,0 +1,735 @@
+{
+    "formatVersion": 1,
+    "database": {
+        "version": 1,
+        "identityHash": "19bdde3fc0bca8178626b8c3558f90ff",
+        "entities": [
+            {
+                "tableName": "routes",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `code` TEXT, `visitDays` TEXT NOT NULL, PRIMARY KEY(`id`))",
+                "fields": [
+                    {
+                        "fieldPath": "id",
+                        "columnName": "id",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "name",
+                        "columnName": "name",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "code",
+                        "columnName": "code",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "visitDays",
+                        "columnName": "visitDays",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["id"]
+                }
+            },
+            {
+                "tableName": "categories",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `nameBn` TEXT, `sort` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+                "fields": [
+                    {
+                        "fieldPath": "id",
+                        "columnName": "id",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "name",
+                        "columnName": "name",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "nameBn",
+                        "columnName": "nameBn",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "sort",
+                        "columnName": "sort",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["id"]
+                }
+            },
+            {
+                "tableName": "products",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `categoryId` TEXT, `sku` TEXT, `name` TEXT NOT NULL, `nameBn` TEXT, `brand` TEXT, `packSize` INTEGER NOT NULL, `mrp` INTEGER NOT NULL, `price` INTEGER NOT NULL, `active` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+                "fields": [
+                    {
+                        "fieldPath": "id",
+                        "columnName": "id",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "categoryId",
+                        "columnName": "categoryId",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "sku",
+                        "columnName": "sku",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "name",
+                        "columnName": "name",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "nameBn",
+                        "columnName": "nameBn",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "brand",
+                        "columnName": "brand",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "packSize",
+                        "columnName": "packSize",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "mrp",
+                        "columnName": "mrp",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "price",
+                        "columnName": "price",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "active",
+                        "columnName": "active",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["id"]
+                }
+            },
+            {
+                "tableName": "price_items",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`listId` TEXT NOT NULL, `appliesTo` TEXT NOT NULL, `target` TEXT, `productId` TEXT NOT NULL, `unitPrice` INTEGER NOT NULL, PRIMARY KEY(`listId`, `productId`))",
+                "fields": [
+                    {
+                        "fieldPath": "listId",
+                        "columnName": "listId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "appliesTo",
+                        "columnName": "appliesTo",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "target",
+                        "columnName": "target",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "productId",
+                        "columnName": "productId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "unitPrice",
+                        "columnName": "unitPrice",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["listId", "productId"]
+                }
+            },
+            {
+                "tableName": "stock",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` TEXT NOT NULL, `available` INTEGER NOT NULL, PRIMARY KEY(`productId`))",
+                "fields": [
+                    {
+                        "fieldPath": "productId",
+                        "columnName": "productId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "available",
+                        "columnName": "available",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["productId"]
+                }
+            },
+            {
+                "tableName": "shops",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `routeId` TEXT, `code` TEXT, `name` TEXT NOT NULL, `nameBn` TEXT, `ownerName` TEXT, `phone` TEXT, `category` TEXT, `lat` REAL, `lng` REAL, `creditLimit` INTEGER NOT NULL, `due` INTEGER NOT NULL, `status` TEXT NOT NULL, `lastOrderAt` INTEGER, PRIMARY KEY(`id`))",
+                "fields": [
+                    {
+                        "fieldPath": "id",
+                        "columnName": "id",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "routeId",
+                        "columnName": "routeId",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "code",
+                        "columnName": "code",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "name",
+                        "columnName": "name",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "nameBn",
+                        "columnName": "nameBn",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "ownerName",
+                        "columnName": "ownerName",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "phone",
+                        "columnName": "phone",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "category",
+                        "columnName": "category",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "lat",
+                        "columnName": "lat",
+                        "affinity": "REAL"
+                    },
+                    {
+                        "fieldPath": "lng",
+                        "columnName": "lng",
+                        "affinity": "REAL"
+                    },
+                    {
+                        "fieldPath": "creditLimit",
+                        "columnName": "creditLimit",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "due",
+                        "columnName": "due",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "status",
+                        "columnName": "status",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "lastOrderAt",
+                        "columnName": "lastOrderAt",
+                        "affinity": "INTEGER"
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["id"]
+                },
+                "indices": [
+                    {
+                        "name": "index_shops_routeId",
+                        "unique": false,
+                        "columnNames": ["routeId"],
+                        "orders": [],
+                        "createSql": "CREATE INDEX IF NOT EXISTS `index_shops_routeId` ON `${TABLE_NAME}` (`routeId`)"
+                    }
+                ]
+            },
+            {
+                "tableName": "orders",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `number` TEXT NOT NULL, `shopId` TEXT NOT NULL, `shopName` TEXT NOT NULL, `status` TEXT NOT NULL, `orderedAt` INTEGER NOT NULL, `subtotal` INTEGER NOT NULL, `discount` INTEGER NOT NULL, `total` INTEGER NOT NULL, `paid` INTEGER NOT NULL, `note` TEXT, `rejectReason` TEXT, `tripNumber` TEXT, `itemsJson` TEXT NOT NULL, `flags` TEXT NOT NULL, `lat` REAL, `lng` REAL, `accuracyM` INTEGER, `clientVersion` INTEGER NOT NULL, `sync` TEXT NOT NULL, `syncError` TEXT, PRIMARY KEY(`id`))",
+                "fields": [
+                    {
+                        "fieldPath": "id",
+                        "columnName": "id",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "number",
+                        "columnName": "number",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "shopId",
+                        "columnName": "shopId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "shopName",
+                        "columnName": "shopName",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "status",
+                        "columnName": "status",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "orderedAt",
+                        "columnName": "orderedAt",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "subtotal",
+                        "columnName": "subtotal",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "discount",
+                        "columnName": "discount",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "total",
+                        "columnName": "total",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "paid",
+                        "columnName": "paid",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "note",
+                        "columnName": "note",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "rejectReason",
+                        "columnName": "rejectReason",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "tripNumber",
+                        "columnName": "tripNumber",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "itemsJson",
+                        "columnName": "itemsJson",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "flags",
+                        "columnName": "flags",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "lat",
+                        "columnName": "lat",
+                        "affinity": "REAL"
+                    },
+                    {
+                        "fieldPath": "lng",
+                        "columnName": "lng",
+                        "affinity": "REAL"
+                    },
+                    {
+                        "fieldPath": "accuracyM",
+                        "columnName": "accuracyM",
+                        "affinity": "INTEGER"
+                    },
+                    {
+                        "fieldPath": "clientVersion",
+                        "columnName": "clientVersion",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "sync",
+                        "columnName": "sync",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "syncError",
+                        "columnName": "syncError",
+                        "affinity": "TEXT"
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["id"]
+                },
+                "indices": [
+                    {
+                        "name": "index_orders_shopId",
+                        "unique": false,
+                        "columnNames": ["shopId"],
+                        "orders": [],
+                        "createSql": "CREATE INDEX IF NOT EXISTS `index_orders_shopId` ON `${TABLE_NAME}` (`shopId`)"
+                    },
+                    {
+                        "name": "index_orders_orderedAt",
+                        "unique": false,
+                        "columnNames": ["orderedAt"],
+                        "orders": [],
+                        "createSql": "CREATE INDEX IF NOT EXISTS `index_orders_orderedAt` ON `${TABLE_NAME}` (`orderedAt`)"
+                    }
+                ]
+            },
+            {
+                "tableName": "visits",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `shopId` TEXT NOT NULL, `outcome` TEXT NOT NULL, `reason` TEXT, `at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+                "fields": [
+                    {
+                        "fieldPath": "id",
+                        "columnName": "id",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "shopId",
+                        "columnName": "shopId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "outcome",
+                        "columnName": "outcome",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "reason",
+                        "columnName": "reason",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "at",
+                        "columnName": "at",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["id"]
+                },
+                "indices": [
+                    {
+                        "name": "index_visits_at",
+                        "unique": false,
+                        "columnNames": ["at"],
+                        "orders": [],
+                        "createSql": "CREATE INDEX IF NOT EXISTS `index_visits_at` ON `${TABLE_NAME}` (`at`)"
+                    }
+                ]
+            },
+            {
+                "tableName": "trips",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `number` TEXT NOT NULL, `route` TEXT, `vehicle` TEXT, `status` TEXT NOT NULL, `cashCollected` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+                "fields": [
+                    {
+                        "fieldPath": "id",
+                        "columnName": "id",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "number",
+                        "columnName": "number",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "route",
+                        "columnName": "route",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "vehicle",
+                        "columnName": "vehicle",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "status",
+                        "columnName": "status",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "cashCollected",
+                        "columnName": "cashCollected",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["id"]
+                }
+            },
+            {
+                "tableName": "stops",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`orderId` TEXT NOT NULL, `tripId` TEXT NOT NULL, `sort` INTEGER NOT NULL, `number` TEXT NOT NULL, `shopId` TEXT NOT NULL, `shopName` TEXT NOT NULL, `shopNameBn` TEXT, `ownerName` TEXT, `phone` TEXT, `lat` REAL, `lng` REAL, `shopDue` INTEGER NOT NULL, `status` TEXT NOT NULL, `total` INTEGER NOT NULL, `paid` INTEGER NOT NULL, `itemsJson` TEXT NOT NULL, `localResult` TEXT, `localCollected` INTEGER NOT NULL, PRIMARY KEY(`orderId`))",
+                "fields": [
+                    {
+                        "fieldPath": "orderId",
+                        "columnName": "orderId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "tripId",
+                        "columnName": "tripId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "sort",
+                        "columnName": "sort",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "number",
+                        "columnName": "number",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "shopId",
+                        "columnName": "shopId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "shopName",
+                        "columnName": "shopName",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "shopNameBn",
+                        "columnName": "shopNameBn",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "ownerName",
+                        "columnName": "ownerName",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "phone",
+                        "columnName": "phone",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "lat",
+                        "columnName": "lat",
+                        "affinity": "REAL"
+                    },
+                    {
+                        "fieldPath": "lng",
+                        "columnName": "lng",
+                        "affinity": "REAL"
+                    },
+                    {
+                        "fieldPath": "shopDue",
+                        "columnName": "shopDue",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "status",
+                        "columnName": "status",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "total",
+                        "columnName": "total",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "paid",
+                        "columnName": "paid",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "itemsJson",
+                        "columnName": "itemsJson",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "localResult",
+                        "columnName": "localResult",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "localCollected",
+                        "columnName": "localCollected",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": false,
+                    "columnNames": ["orderId"]
+                },
+                "indices": [
+                    {
+                        "name": "index_stops_tripId",
+                        "unique": false,
+                        "columnNames": ["tripId"],
+                        "orders": [],
+                        "createSql": "CREATE INDEX IF NOT EXISTS `index_stops_tripId` ON `${TABLE_NAME}` (`tripId`)"
+                    }
+                ]
+            },
+            {
+                "tableName": "outbox",
+                "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`seq` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `entity` TEXT NOT NULL, `recordId` TEXT NOT NULL, `clientVersion` INTEGER NOT NULL, `payload` TEXT NOT NULL, `state` TEXT NOT NULL, `errorCode` TEXT, `errorMessage` TEXT, `attempts` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL)",
+                "fields": [
+                    {
+                        "fieldPath": "seq",
+                        "columnName": "seq",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "entity",
+                        "columnName": "entity",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "recordId",
+                        "columnName": "recordId",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "clientVersion",
+                        "columnName": "clientVersion",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "payload",
+                        "columnName": "payload",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "state",
+                        "columnName": "state",
+                        "affinity": "TEXT",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "errorCode",
+                        "columnName": "errorCode",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "errorMessage",
+                        "columnName": "errorMessage",
+                        "affinity": "TEXT"
+                    },
+                    {
+                        "fieldPath": "attempts",
+                        "columnName": "attempts",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    },
+                    {
+                        "fieldPath": "createdAt",
+                        "columnName": "createdAt",
+                        "affinity": "INTEGER",
+                        "notNull": true
+                    }
+                ],
+                "primaryKey": {
+                    "autoGenerate": true,
+                    "columnNames": ["seq"]
+                },
+                "indices": [
+                    {
+                        "name": "index_outbox_entity_recordId",
+                        "unique": true,
+                        "columnNames": ["entity", "recordId"],
+                        "orders": [],
+                        "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_outbox_entity_recordId` ON `${TABLE_NAME}` (`entity`, `recordId`)"
+                    }
+                ]
+            }
+        ],
+        "setupQueries": [
+            "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+            "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '19bdde3fc0bca8178626b8c3558f90ff')"
+        ]
+    }
+}

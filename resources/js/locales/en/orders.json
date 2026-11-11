@@ -1,0 +1,113 @@
+{
+    "title": "Orders",
+    "description": "Review, approve and track orders taken in the field",
+    "search": "Search order no. or shop…",
+    "date": "Date",
+    "tabs": {
+        "all": "All",
+        "pending": "Pending approval",
+        "approved": "Approved",
+        "dispatched": "On delivery",
+        "delivered": "Delivered",
+        "closed": "Cancelled / failed"
+    },
+    "columns": {
+        "order": "Order",
+        "shop": "Shop",
+        "sr": "Sales rep",
+        "items": "Items",
+        "total": "Total",
+        "location": "Order location",
+        "status": "Status"
+    },
+    "itemsCount": "{{n}} items",
+    "meters": "{{n}} m",
+    "location": {
+        "ok": "{{distance}} from shop · ±{{accuracy}}",
+        "far": "{{distance}} from shop",
+        "weak": "Weak GPS · ±{{accuracy}}"
+    },
+    "detail": {
+        "title": "Order {{number}}",
+        "meta": "{{time}} · taken by {{sr}}",
+        "printInvoice": "Print invoice",
+        "approve": "Approve order",
+        "items": "Items",
+        "product": "Product",
+        "qty": "Quantity",
+        "unitPrice": "Unit price",
+        "discount": "Discount",
+        "lineTotal": "Total",
+        "subtotal": "Subtotal",
+        "total": "Order total",
+        "paid": "Paid",
+        "due": "Due",
+        "timeline": "Timeline",
+        "events": {
+            "created": "Taken on the phone",
+            "synced": "Received by the server",
+            "flagged": "Flagged for review",
+            "waiting": "Waiting for approval",
+            "approved": "Approved",
+            "delivery": "Delivered to the shop",
+            "onTrip": "On trip {{trip}}",
+            "deliveredStep": "Delivered"
+        },
+        "location": "Live location",
+        "locationHelp": "GPS fix taken at the shop when the order was saved",
+        "locationOk": "Location OK",
+        "needsReview": "Needs review",
+        "distance": "Distance from shop",
+        "accuracy": "GPS accuracy",
+        "fixTime": "Fix time",
+        "mockCheck": "Fake GPS check",
+        "passed": "Passed",
+        "detected": "Detected",
+        "shop": "Shop",
+        "owner": "Owner",
+        "phone": "Phone",
+        "shopDue": "Current due",
+        "creditLimit": "Credit limit",
+        "creditUse": "{{used}} of {{limit}} after this order",
+        "takenBy": "Taken by",
+        "note": "SR note",
+        "noteText": "Please deliver before 11 am — the shop closes for lunch.",
+        "notFound": "Order {{number}} was not found.",
+        "back": "Back to orders",
+        "rejectedBecause": "Rejected:",
+        "call": "Call"
+    },
+    "reschedule": "Reschedule",
+    "onTrip": "On trip {{trip}}",
+    "toast": {
+        "approved": "{{n}} order(s) approved",
+        "rejected": "{{n}} order(s) rejected",
+        "assigned": "{{n}} order(s) put on trip {{trip}}",
+        "rescheduled": "{{order}} is back in Approved, ready for a new trip"
+    },
+    "bulk": {
+        "approve": "Approve ({{n}})",
+        "assign": "Assign to trip ({{n}})",
+        "reject": "Reject ({{n}})"
+    },
+    "reject": {
+        "title": "Reject {{n}} order(s)?",
+        "description": "The sales rep sees the reason in the app.",
+        "reason": "Reason",
+        "r1": "Over credit limit",
+        "r2": "Wrong price or quantity",
+        "r3": "Duplicate order"
+    },
+    "assign": {
+        "title": "Put {{n}} order(s) on a trip",
+        "description": "Choose a planned or loaded trip.",
+        "none": "There is no planned trip yet.",
+        "createTrip": "Create a trip",
+        "tripOrders": "{{n}} orders"
+    },
+    "invoice": {
+        "title": "Invoice",
+        "sr": "Sales rep",
+        "thanks": "Thank you for your business."
+    }
+}

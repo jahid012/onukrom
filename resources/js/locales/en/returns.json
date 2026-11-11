@@ -1,0 +1,63 @@
+{
+    "title": "Returns",
+    "description": "Goods returned at delivery or from the market, waiting for the office",
+    "help": "Approving a return credits the shop's ledger. Good items go back to the main godown, damaged items to the damage store.",
+    "stats": {
+        "pending": "Waiting for approval",
+        "damaged": "Damaged items",
+        "damagedNote": "Go to the damage store",
+        "approved": "Approved returns",
+        "approvedNote": "{{n}} credited to shop ledgers"
+    },
+    "columns": {
+        "number": "Return",
+        "shop": "Shop",
+        "type": "Type",
+        "reason": "Reason",
+        "items": "Items",
+        "value": "Value",
+        "by": "Recorded by",
+        "status": "Status"
+    },
+    "type": {
+        "at_delivery": "At delivery",
+        "market": "Market return"
+    },
+    "reason": {
+        "damaged": "Damaged",
+        "expired": "Expired",
+        "wrong_item": "Wrong item",
+        "not_needed": "Not needed",
+        "other": "Other"
+    },
+    "condition": {
+        "good": "Item in good condition",
+        "damaged": "Item damaged"
+    },
+    "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+    },
+    "itemsCount": "{{n}} item(s)",
+    "destination": {
+        "main": "Back to the main godown (good stock)",
+        "damage": "To the damage store"
+    },
+    "toast": {
+        "approved": "{{number}} approved and credited",
+        "rejected": "{{number}} rejected"
+    },
+    "approveDialog": {
+        "title": "Approve {{number}}",
+        "description": "{{shop}} will be credited {{amount}}.",
+        "destination": "Where do the goods go?"
+    },
+    "rejectDialog": {
+        "title": "Reject {{number}}?",
+        "description": "No credit is given and the goods go back to the shop.",
+        "reason": "Reason",
+        "r1": "Not bought from us",
+        "r2": "Outside return period"
+    }
+}

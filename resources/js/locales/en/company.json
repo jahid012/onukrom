@@ -1,0 +1,88 @@
+{
+    "title": "Company settings",
+    "description": "Rules for orders, order location, field work and deliveries — sent to every phone on sync",
+    "units": {
+        "m": "m",
+        "sec": "sec",
+        "hours": "hours"
+    },
+    "profile": {
+        "title": "Company profile",
+        "help": "Shown as text on invoices and load sheets (no logo).",
+        "name": "Company name",
+        "code": "Company code",
+        "codeHelp": "Staff type this in the app. Ask Onukrom support to change it.",
+        "phone": "Phone",
+        "address": "Address",
+        "addressHelp": "Printed on invoices"
+    },
+    "orders": {
+        "title": "Orders",
+        "help": "How orders from the field are checked",
+        "autoApprove": "Auto-approve orders",
+        "autoApproveHelp": "Skip the approval step — good for small companies",
+        "creditMode": "Over credit limit",
+        "warn": "Accept and flag",
+        "block": "Block the order",
+        "maxDiscount": "Max discount",
+        "priceWindow": "Offline price window",
+        "priceWindowHelp": "Old prices accepted this long after a price change",
+        "blockOverStock": "Block approval over stock",
+        "blockOverStockHelp": "Checked in the office when approving"
+    },
+    "location": {
+        "title": "Order location",
+        "help": "Live GPS taken at the shop for every order, delivery and payment",
+        "mode": "Location for orders",
+        "modeHelp": "Required: an order cannot be saved without a GPS fix",
+        "required": "Required",
+        "flag": "Save and flag",
+        "maxAccuracy": "Max GPS accuracy",
+        "maxAge": "Max fix age",
+        "maxAgeHelp": "Older positions are never used",
+        "wait": "Wait for a good fix",
+        "waitHelp": "Then save with the best fix and flag it",
+        "geofence": "Far from shop after",
+        "geofenceHelp": "Orders further than this are flagged",
+        "blockMock": "Block fake GPS",
+        "blockMockHelp": "Off: save and flag. On: the order is rejected",
+        "shopFromOrder": "Set shop location from first order",
+        "shopFromOrderHelp": "For shops that have no saved location yet",
+        "flagWarning": "Orders without a GPS fix will be accepted and only flagged. Use this only if many shops have poor GPS signal."
+    },
+    "field": {
+        "title": "Field work",
+        "help": "Attendance, duty tracking and phones",
+        "startDay": "Require Start day",
+        "startDayHelp": "Staff must start the day before taking orders",
+        "duty": "Duty GPS tracking",
+        "dutyHelp": "Records the route while on duty (shows a notification)",
+        "interval": "Tracking interval",
+        "oneDevice": "One phone per staff",
+        "oneDeviceHelp": "Logging in on a new phone signs out the old one"
+    },
+    "delivery": {
+        "title": "Delivery",
+        "proof": "Proof of delivery",
+        "proofHelp": "Asked for when the delivery man marks an order delivered",
+        "none": "Not needed",
+        "signature": "Signature",
+        "photo": "Photo",
+        "both": "Signature and photo"
+    },
+    "sms": {
+        "title": "SMS",
+        "help": "Used for invites and password resets",
+        "provider": "Provider",
+        "usage": "SMS this month",
+        "dailyCap": "Daily SMS limit",
+        "dailyCapHelp": "Protects against accidental or abusive sending"
+    },
+    "discard": "Discard",
+    "unsaved": "You have unsaved changes.",
+    "range": "Between {{min}} and {{max}}",
+    "toast": {
+        "saved": "Settings saved — phones get them on the next sync",
+        "invalid": "Fix the highlighted values first"
+    }
+}

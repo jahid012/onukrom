@@ -1,0 +1,69 @@
+{
+    "title": "Shops",
+    "description": "Your retail customers — approve shops added in the field, follow dues and inactive shops",
+    "search": "Search name, phone or code…",
+    "add": "Add shop",
+    "moveRoute": "Move to route",
+    "tabs": {
+        "all": "All shops",
+        "pending": "Waiting for approval",
+        "inactive30": "No order in 30 days",
+        "dues": "With dues",
+        "inactive": "Inactive"
+    },
+    "columns": {
+        "shop": "Shop",
+        "owner": "Owner",
+        "route": "Route",
+        "due": "Due",
+        "lastOrder": "Last order",
+        "location": "Location",
+        "status": "Status"
+    },
+    "limit": "limit {{amount}}",
+    "never": "No order yet",
+    "locationSet": "Location saved",
+    "locationMissing": "No location yet",
+    "addedBy": "Added by {{name}}",
+    "actions": {
+        "view": "View details",
+        "deactivate": "Deactivate",
+        "activate": "Activate"
+    },
+    "detail": {
+        "recentOrders": "Recent orders"
+    },
+    "form": {
+        "addTitle": "Add shop",
+        "editTitle": "Edit shop",
+        "description": "Sales reps on this route see the shop in the app after the next sync.",
+        "name": "Shop name",
+        "nameBn": "Shop name in Bangla",
+        "phone": "Mobile number",
+        "category": "Shop type",
+        "creditLimit": "Credit limit (৳)",
+        "locationNote": "The location is taken from the first order placed at this shop."
+    },
+    "move": {
+        "title": "Move {{n}} shop(s) to another route",
+        "description": "They will be visited by that route's sales rep."
+    },
+    "import": {
+        "button": "Import CSV",
+        "title": "Import shops",
+        "description": "Download the template, fill it in Excel, save as CSV and choose the file.",
+        "template": "Download template",
+        "choose": "Choose CSV file",
+        "found": "{{ok}} shops ready to import · {{bad}} rows skipped (missing name or wrong phone)",
+        "submit": "Import {{n}} shops"
+    },
+    "toast": {
+        "added": "{{name}} added",
+        "updated": "{{name}} saved",
+        "approved": "{{n}} shop(s) approved",
+        "deactivated": "{{name}} deactivated",
+        "activated": "{{name}} activated",
+        "moved": "{{n}} shop(s) moved to {{route}}",
+        "imported": "{{n}} shops imported"
+    }
+}

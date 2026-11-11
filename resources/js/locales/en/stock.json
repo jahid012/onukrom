@@ -1,0 +1,62 @@
+{
+    "title": "Stock",
+    "description": "Stock in every warehouse — reserved for approved orders, low stock and every movement",
+    "transfer": "Transfer",
+    "adjust": "Adjust stock",
+    "help": "Stock only changes through movements: purchase, approval (reserve), delivery, return, adjustment or transfer.",
+    "stats": {
+        "value": "Stock value",
+        "low": "Low stock",
+        "lowNote": "Below reorder level",
+        "out": "Out of stock"
+    },
+    "columns": {
+        "product": "Product",
+        "onHand": "On hand",
+        "reserved": "Reserved",
+        "available": "Available",
+        "status": "Status"
+    },
+    "level": {
+        "ok": "In stock",
+        "low": "Low",
+        "out": "Out of stock"
+    },
+    "movementsTitle": "Recent movements",
+    "movementsSubtitle": "All warehouses",
+    "move": {
+        "purchase": "Purchase",
+        "reserve": "Reserved",
+        "deliver": "Delivered",
+        "return": "Returned",
+        "adjust": "Adjustment",
+        "transfer": "Transfer to van"
+    },
+    "form": {
+        "adjustTitle": "Adjust stock",
+        "transferTitle": "Transfer stock",
+        "transferDescription": "Move stock between warehouses, e.g. loading a delivery van.",
+        "warehouse": "Warehouse",
+        "from": "From",
+        "to": "To",
+        "same": "Choose a different warehouse",
+        "in": "Add stock",
+        "out": "Remove stock",
+        "cartons": "Cartons",
+        "pieces": "Loose pieces",
+        "reason": "Reason",
+        "onHand": "On hand now: {{qty}}",
+        "free": "Available to move: {{qty}}"
+    },
+    "reason": {
+        "purchase": "Purchase received",
+        "opening": "Opening stock",
+        "count": "Stock count correction",
+        "damaged": "Damaged",
+        "expired": "Expired"
+    },
+    "toast": {
+        "adjusted": "{{product}}: {{qty}}",
+        "transferred": "{{qty}} of {{product}} transferred"
+    }
+}

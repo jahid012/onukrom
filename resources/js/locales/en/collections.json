@@ -1,0 +1,77 @@
+{
+    "title": "Collections",
+    "description": "Payments from shops, cash handed in by staff and outstanding dues",
+    "search": "Search number or shop…",
+    "allMethods": "All methods",
+    "onAccount": "On account",
+    "stats": {
+        "today": "Collected today",
+        "todayNote": "{{n}} payments",
+        "withStaff": "Cash with staff",
+        "withStaffNote": "{{n}} deposits to receive",
+        "toVerify": "Mobile / bank to verify",
+        "toVerifyNote": "bKash, Nagad, bank, cheque",
+        "dues": "Total dues",
+        "duesNote": "{{n}} shops"
+    },
+    "tabs": {
+        "collections": "Payments",
+        "deposits": "Cash deposits",
+        "dues": "Dues & aging"
+    },
+    "columns": {
+        "number": "Number",
+        "shop": "Shop / order",
+        "by": "Collected by",
+        "method": "Method",
+        "amount": "Amount",
+        "status": "Status"
+    },
+    "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "rejected": "Rejected"
+    },
+    "deposits": {
+        "help": "Staff hand collected cash to the office. Confirm when you have counted it.",
+        "id": "Deposit",
+        "staff": "Staff",
+        "collections": "Payments",
+        "waiting": "Waiting",
+        "confirmed": "Received",
+        "receive": "Mark received"
+    },
+    "dues": {
+        "total": "Outstanding dues",
+        "aging": "Dues by age",
+        "bucket": {
+            "0_30": "0–30 days",
+            "31_60": "31–60 days",
+            "60_plus": "Over 60 days"
+        },
+        "shops": "{{n}} shops",
+        "topTitle": "Highest dues",
+        "topSubtitle": "Shops to follow up first",
+        "limit": "limit {{amount}}"
+    },
+    "allStatuses": "All statuses",
+    "toast": {
+        "confirmed": "{{number}} confirmed",
+        "rejected": "{{number}} rejected",
+        "received": "Deposit of {{amount}} received"
+    },
+    "reject": {
+        "title": "Reject {{number}}?",
+        "description": "The payment is removed from the shop's ledger and the staff member is told why.",
+        "reason": "Reason",
+        "r1": "Transaction ID not found",
+        "r2": "Amount does not match"
+    },
+    "receiveDialog": {
+        "title": "Receive cash from {{name}}",
+        "description": "{{n}} payments, {{amount}} expected.",
+        "counted": "Amount counted (৳)",
+        "short": "{{amount}} short — it stays as cash with staff",
+        "extra": "{{amount}} more than expected"
+    }
+}

@@ -1,0 +1,78 @@
+{
+    "title": "Reports",
+    "description": "Sales, field work, deliveries, money and stock — export to Excel or PDF",
+    "perfTitle": "Sales rep performance",
+    "perfSubtitle": "Target vs achieved this month",
+    "ofTarget": "target {{target}}",
+    "cols": {
+        "sr": "Sales rep",
+        "target": "Target achieved",
+        "sales": "Sales",
+        "visits": "Visits",
+        "strike": "Strike rate"
+    },
+    "groups": {
+        "sales": "Sales",
+        "field": "Field work",
+        "delivery": "Delivery",
+        "money": "Money",
+        "stock": "Stock & returns"
+    },
+    "items": {
+        "bySr": {
+            "title": "Sales by sales rep",
+            "text": "Orders, value and growth per SR"
+        },
+        "byArea": {
+            "title": "Sales by area",
+            "text": "Zone, area and route totals"
+        },
+        "byProduct": {
+            "title": "Sales by product",
+            "text": "Quantity and value per product"
+        },
+        "byShop": {
+            "title": "Sales by shop",
+            "text": "Top and declining shops"
+        },
+        "visits": {
+            "title": "Visit report",
+            "text": "Planned vs visited shops, time at each shop"
+        },
+        "location": {
+            "title": "Order location report",
+            "text": "Orders far from the shop, weak or fake GPS"
+        },
+        "trips": {
+            "title": "Trip summary",
+            "text": "Delivered, failed and cash per trip"
+        },
+        "failed": {
+            "title": "Failed deliveries",
+            "text": "Reasons and rescheduling"
+        },
+        "collections": {
+            "title": "Collections",
+            "text": "By method, staff and day"
+        },
+        "dues": {
+            "title": "Dues & aging",
+            "text": "0–30, 31–60 and 60+ days"
+        },
+        "cashWithStaff": {
+            "title": "Cash with staff",
+            "text": "Collected but not yet deposited"
+        },
+        "stockLevels": {
+            "title": "Stock levels",
+            "text": "On hand, reserved and low stock"
+        },
+        "returns": {
+            "title": "Returns",
+            "text": "By reason, product and shop"
+        }
+    },
+    "download": "Download CSV",
+    "downloaded": "{{name}} downloaded ({{n}} rows)",
+    "empty": "Nothing to export yet"
+}
