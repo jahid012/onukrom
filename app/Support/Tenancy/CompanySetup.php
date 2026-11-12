@@ -63,7 +63,11 @@ class CompanySetup
         });
     }
 
-    /** Validation rules shared by the command and the deploy hook. */
+    /**
+     * Validation rules shared by the command and the deploy hook.
+     *
+     * @return array<string, list<mixed>>
+     */
     public static function rules(): array
     {
         return [
