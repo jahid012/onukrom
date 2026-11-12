@@ -19,22 +19,22 @@ The compiled frontend (`public/build`) is uploaded.
 
 ## Server (onukrom.com on the bdgigs.com cPanel)
 
-| What | Value |
-|---|---|
-| Project folder | `/home/bdgigsco/onukrom.com` |
-| Document root | `/home/bdgigsco/onukrom.com/public` (already set) |
-| PHP | 8.4 |
-| Database / user | `bdgigsco_onukrom` / `bdgigsco_onukrom` (MySQL, `localhost`) |
-| FTP account | `deploy@onukrom.com`, home = the project folder, host `bdgigs.com`, FTPS |
+| What            | Value                                                                    |
+| --------------- | ------------------------------------------------------------------------ |
+| Project folder  | `/home/bdgigsco/onukrom.com`                                             |
+| Document root   | `/home/bdgigsco/onukrom.com/public` (already set)                        |
+| PHP             | 8.4                                                                      |
+| Database / user | `bdgigsco_onukrom` / `bdgigsco_onukrom` (MySQL, `localhost`)             |
+| FTP account     | `deploy@onukrom.com`, home = the project folder, host `bdgigs.com`, FTPS |
 
 The server address, FTP user and site URL are written in `deploy.yml`. Only
 three values are GitHub secrets (repository → Settings → Secrets and variables → Actions):
 
-| Secret | |
-|---|---|
-| `FTP_PASSWORD` | password of `deploy@onukrom.com` |
-| `DEPLOY_TOKEN` | same value as `DEPLOY_TOKEN` in the server's `.env` |
-| `VITE_MAPBOX_TOKEN` | the public `pk.` Mapbox token |
+| Secret              |                                                     |
+| ------------------- | --------------------------------------------------- |
+| `FTP_PASSWORD`      | password of `deploy@onukrom.com`                    |
+| `DEPLOY_TOKEN`      | same value as `DEPLOY_TOKEN` in the server's `.env` |
+| `VITE_MAPBOX_TOKEN` | the public `pk.` Mapbox token                       |
 
 Optional repository variable `FTP_PROTOCOL`: `ftps` (default), or `ftp` if FTPS fails.
 
@@ -54,6 +54,7 @@ Optional repository variable `FTP_PROTOCOL`: `ftps` (default), or `ftp` if FTPS 
 
 `deploy/production.env` and `deploy/SECRETS.txt` are created locally once
 (gitignored). Delete `SECRETS.txt` after entering the passwords.
+
 ## Everyday use
 
 - **Code change:** push to `main`. Nothing else to do.
@@ -61,11 +62,29 @@ Optional repository variable `FTP_PROTOCOL`: `ftps` (default), or `ftp` if FTPS 
   (A manual run from Actions → Deploy lets you untick migrations.)
 - **New or updated Composer package:** the deploy stops with
   "composer.lock changed…". Then:
-  1. Build a new zip, either on your PC
-     (`powershell -ExecutionPolicy Bypass -File deploy/build-vendor.ps1` → `deploy/vendor-production.zip`)
-     or on GitHub (Actions → Build vendor zip → download the artifact).
-  2. On the server, delete the old `vendor` folder, then upload and extract the new zip.
-  3. Re-run the failed deploy.
+    1. Build a new zip, either on your PC
+       (`powershell -ExecutionPolicy Bypass -File deploy/build-vendor.ps1` → `deploy/vendor-production.zip`)
+       or on GitHub (Actions → Build vendor zip → download the artifact).
+    2. On the server, delete the old `vendor` folder, then upload and extract the new zip.
+    3. Re-run the failed deploy.
+
+## First company and admin login
+
+Production has no demo data and no sign-up page. After the first deploy, run on
+your PC:
+
+```
+powershell -ExecutionPolicy Bypass -File deploy/create-company.ps1
+```
+
+It asks for the company code, company name, owner name, email and mobile, then
+calls the server's `create-company` hook. The server creates the company with its
+built-in roles and its main and damage warehouses, and gives the owner a random
+password. You see that password once, in your terminal; it never shows up in
+GitHub's logs. Change it after the first login (Settings → Password).
+
+Where artisan is available (locally, or a cPanel Terminal), the same thing is
+`php artisan onukrom:create-company <code> "<name>" --owner="…" --email=…`.
 
 ## If a deploy fails half-way
 
@@ -83,11 +102,12 @@ curl -X POST -H "X-Deploy-Token: YOUR_TOKEN" https://onukrom.com/api/_deploy/ref
 
 `app/Http/Controllers/DeployController.php`, under `/api/_deploy/*`:
 
-| Call | Does |
-|---|---|
-| `GET status` | which vendor build is on the server (`vendor/.lock-hash`), PHP version |
-| `POST down` | maintenance mode (the hooks themselves stay reachable) |
-| `POST refresh[?migrate=1]` | creates missing `storage/` folders, `optimize:clear`, `migrate --force`, `optimize`, resets OPcache, `up` |
+| Call                       | Does                                                                                                                      |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `GET status`               | which vendor build is on the server (`vendor/.lock-hash`), PHP version                                                    |
+| `POST down`                | maintenance mode (the hooks themselves stay reachable)                                                                    |
+| `POST create-company`      | first company + owner login (see above)                                                                                   |
+| `POST refresh[?migrate=1]` | creates missing `storage/` folders, `config:clear`, `migrate --force`, `optimize:clear`, `optimize`, resets OPcache, `up` |
 
 Without the right `X-Deploy-Token` header (or with `DEPLOY_TOKEN` empty) they
 answer 404, as if they did not exist.

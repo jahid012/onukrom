@@ -32,8 +32,12 @@ Route::prefix('v1')->group(function () {
 | Deploy hooks for the CI/CD pipeline (cPanel has no SSH). Token-protected;
 | see app/Http/Controllers/DeployController.php and docs/DEPLOY.md.
 */
-Route::prefix('_deploy')->middleware('throttle:10,1')->group(function () {
+// No throttle: it stores hits in the cache, i.e. the database `cache` table,
+// which does not exist until the first `migrate` these hooks run. Unknown
+// tokens get a 404 and the token is 48 random hex characters.
+Route::prefix('_deploy')->group(function () {
     Route::get('status', [DeployController::class, 'status']);
     Route::post('down', [DeployController::class, 'down']);
     Route::post('refresh', [DeployController::class, 'refresh']);
+    Route::post('create-company', [DeployController::class, 'createCompany']);
 });

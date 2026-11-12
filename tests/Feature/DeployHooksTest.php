@@ -41,7 +41,7 @@ class DeployHooksTest extends TestCase
 
         $this->withHeader('X-Deploy-Token', 'secret-token')->postJson('/api/_deploy/refresh?migrate=1')->assertOk()->assertJsonPath('ok', true);
 
-        $this->assertSame(['optimize:clear', 'migrate', 'optimize', 'up'], $calls);
+        $this->assertSame(['config:clear', 'migrate', 'optimize:clear', 'optimize', 'up'], $calls);
     }
 
     public function test_refresh_without_migrate_skips_migrations(): void

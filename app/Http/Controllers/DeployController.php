@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Tenancy\CompanySetup;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -17,6 +18,7 @@ use Throwable;
  *   GET  /api/_deploy/status   which vendor build is on the server
  *   POST /api/_deploy/down     maintenance mode while files upload
  *   POST /api/_deploy/refresh  clear + rebuild caches (+ migrate), back online
+ *   POST /api/_deploy/create-company  first company + owner login
  */
 class DeployController extends Controller
 {
@@ -48,6 +50,29 @@ class DeployController extends Controller
         return response()->json(['ok' => true, 'output' => trim(Artisan::output())]);
     }
 
+    /**
+     * First company + owner login on a fresh server (no SSH for artisan).
+     * Called from your own PC by deploy/create-company.ps1, never from CI,
+     * so the generated password only appears in your terminal.
+     */
+    public function createCompany(Request $request): JsonResponse
+    {
+        $this->authorize($request);
+        $data = $request->validate(CompanySetup::rules());
+
+        $result = CompanySetup::create(
+            ['code' => $data['code'], 'name' => $data['name']],
+            ['name' => $data['owner_name'], 'email' => $data['email'], 'phone' => $data['phone'] ?? null, 'password' => $data['password'] ?? null],
+        );
+
+        return response()->json([
+            'ok' => true,
+            'company_code' => $result['tenant']->code,
+            'email' => $result['owner']->email,
+            'password' => ($data['password'] ?? null) ? null : $result['password'],
+        ], 201);
+    }
+
     public function refresh(Request $request): JsonResponse
     {
         $this->authorize($request);
@@ -63,12 +88,15 @@ class DeployController extends Controller
         }
 
         try {
-            $run('optimize:clear');
+            // Migrate before optimize:clear: its cache:clear needs the database
+            // `cache` table, which a fresh server only gets from the migrations.
+            $run('config:clear');
 
             if ($request->boolean('migrate')) {
                 $run('migrate', ['--force' => true]);
             }
 
+            $run('optimize:clear');
             $run('optimize');
         } catch (Throwable $e) {
             report($e);
