@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // The deploy pipeline must reach these while the site is in maintenance mode.
         $middleware->preventRequestsDuringMaintenance(except: ['api/_deploy/*']);
 
+        // PayStation may POST the payer back from its own site (no CSRF token);
+        // the handler trusts nothing in the request and re-checks with PayStation.
+        $middleware->validateCsrfTokens(except: ['billing/paystation/return/*']);
+
         $middleware->alias([
             'tenant' => EnsureTenantUser::class,
             'platform' => EnsurePlatformUser::class,

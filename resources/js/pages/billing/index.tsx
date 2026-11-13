@@ -1,5 +1,12 @@
 import { Head, router } from '@inertiajs/react';
-import { CalendarClock, Check, CreditCard, Receipt } from 'lucide-react';
+import {
+    CalendarClock,
+    Check,
+    CreditCard,
+    Loader2,
+    Receipt,
+    Zap,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Field, FormDialog, TextInput } from '@/components/admin/dialogs';
 import { SelectField } from '@/components/admin/fields';
@@ -15,6 +22,7 @@ import { cn } from '@/lib/utils';
 import {
     index as billingIndex,
     pay,
+    payOnline,
     plan as planRoute,
 } from '@/routes/billing';
 
@@ -57,6 +65,7 @@ export default function BillingIndex({
     invoices,
     methods,
     paymentInstructions,
+    onlinePayment,
 }: {
     canManage: boolean;
     subscription: Subscription;
@@ -64,10 +73,17 @@ export default function BillingIndex({
     invoices: Invoice[];
     methods: string[];
     paymentInstructions: string;
+    onlinePayment: boolean;
 }) {
     const { t, f, locale } = useFormat();
     const [paying, setPaying] = useState<Invoice | null>(null);
     const [switchTo, setSwitchTo] = useState<Plan | null>(null);
+    const [redirecting, setRedirecting] = useState(false);
+    // "paystation:bkash" → "Online (bkash)"; manual methods have their own names.
+    const methodLabel = (m: string) =>
+        m.startsWith('paystation:')
+            ? t('billing.methods.online', { method: m.slice(11) })
+            : t(`billing.methods.${m}`);
     const date = (iso: string | null) =>
         iso
             ? f.date(new Date(`${iso}T00:00:00`), {
@@ -154,8 +170,18 @@ export default function BillingIndex({
                     <Panel>
                         <PanelHeader
                             title={t('billing.howToPay')}
-                            subtitle={t('billing.howToPaySub')}
+                            subtitle={
+                                onlinePayment
+                                    ? t('billing.howToPayOnline')
+                                    : t('billing.howToPaySub')
+                            }
                         />
+                        {onlinePayment && (
+                            <p className="flex items-start gap-2 border-b px-4 py-3 text-sm">
+                                <Zap className="mt-0.5 size-4 shrink-0 text-primary" />
+                                {t('billing.onlineText')}
+                            </p>
+                        )}
                         <p className="px-4 py-3 text-sm whitespace-pre-line">
                             {paymentInstructions || t('billing.noInstructions')}
                         </p>
@@ -200,11 +226,39 @@ export default function BillingIndex({
                                             `billing.invoiceStatus.${i.status}`,
                                         )}
                                     />
+                                    {canManage && onlinePayment && (
+                                        <Button
+                                            size="sm"
+                                            disabled={redirecting}
+                                            onClick={() => {
+                                                setRedirecting(true);
+                                                // The server answers with a redirect to PayStation's checkout.
+                                                router.post(
+                                                    payOnline.url(i.id),
+                                                    {},
+                                                    {
+                                                        onFinish: () =>
+                                                            setRedirecting(
+                                                                false,
+                                                            ),
+                                                    },
+                                                );
+                                            }}
+                                        >
+                                            {redirecting ? (
+                                                <Loader2 className="size-3.5 animate-spin" />
+                                            ) : (
+                                                <Zap className="size-3.5" />
+                                            )}
+                                            {t('billing.payOnline')}
+                                        </Button>
+                                    )}
                                     {canManage && (
                                         <Button
                                             size="sm"
                                             variant={
-                                                i.status === 'unpaid'
+                                                i.status === 'unpaid' &&
+                                                !onlinePayment
                                                     ? 'default'
                                                     : 'outline'
                                             }
@@ -212,7 +266,9 @@ export default function BillingIndex({
                                         >
                                             <CreditCard className="size-3.5" />
                                             {i.status === 'unpaid'
-                                                ? t('billing.payNow')
+                                                ? onlinePayment
+                                                    ? t('billing.paidManually')
+                                                    : t('billing.payNow')
                                                 : t('billing.changeRef')}
                                         </Button>
                                     )}
@@ -337,7 +393,7 @@ export default function BillingIndex({
                                             </td>
                                             <td className="px-4 py-2.5 text-muted-foreground">
                                                 {i.method
-                                                    ? `${t(`billing.methods.${i.method}`)} · ${i.reference ?? ''}`
+                                                    ? `${methodLabel(i.method)} · ${i.reference ?? ''}`
                                                     : '—'}
                                             </td>
                                             <td className="px-4 py-2.5 text-right font-medium tabular-nums">

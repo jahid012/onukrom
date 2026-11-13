@@ -107,6 +107,20 @@ Pro ৳7,500 per month).
 
 Locally: `php artisan onukrom:create-super-admin you@example.com --name="…"`.
 
+## Online payment (PayStation)
+
+Owners can pay an invoice online (bKash, Nagad, Rocket, Upay, cards) through
+PayStation's hosted checkout. In the platform panel → **Settings → Online
+payment — PayStation** enter the Merchant ID and password (stored encrypted),
+choose **Sandbox** first, and send PayStation the **IPN URL** shown there
+(`https://onukrom.com/api/paystation/ipn`). Test one payment, then switch to
+**Live**.
+
+An invoice is marked paid only after Onukrom asks PayStation's
+`/transaction-status` API itself and the full amount succeeded — the browser
+return and the IPN are never trusted on their own. Manual payment (transaction
+ID + your check) keeps working next to it.
+
 ## Meta Pixel & Conversions API
 
 No `.env` change is needed. In the platform panel → **Settings → Meta Pixel &

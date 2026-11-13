@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\SyncPullController;
 use App\Http\Controllers\Api\V1\SyncPushController;
 use App\Http\Controllers\DeployController;
+use App\Http\Controllers\PayStationIpnController;
 use App\Http\Middleware\ResolveApiTenant;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,12 @@ Route::prefix('v1')->group(function () {
         });
     });
 });
+
+/*
+| PayStation's server-to-server payment notice (IPN). Give this URL to
+| PayStation; the body is verified against their status API before use.
+*/
+Route::post('paystation/ipn', PayStationIpnController::class)->middleware('throttle:60,1')->name('paystation.ipn');
 
 /*
 | Deploy hooks for the CI/CD pipeline (cPanel has no SSH). Token-protected;

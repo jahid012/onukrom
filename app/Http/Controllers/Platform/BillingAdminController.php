@@ -43,15 +43,6 @@ class BillingAdminController extends Controller
         abort_unless(in_array($invoice->status, ['unpaid', 'submitted'], true), 422, 'Only an open invoice can be confirmed.');
         Billing::confirm($invoice, $request->user());
 
-        // The real conversion for ads: a company paid. Server-only event.
-        $owner = Tenant::findOrFail($invoice->tenant_id)->owner();
-        MetaConversions::sendSystem('Subscribe', 'subscribe.invoice-'.$invoice->id, [
-            'email' => $owner?->email,
-            'phone' => $owner?->phone,
-            'name' => $owner?->name,
-            'external_id' => 'tenant-'.$invoice->tenant_id,
-        ], ['value' => $invoice->amount / 100, 'currency' => 'BDT', 'predicted_ltv' => ($invoice->amount / 100) * 12, 'content_name' => $invoice->plan_key]);
-
         return back()->with('success', $invoice->number.' confirmed as paid.');
     }
 
@@ -144,6 +135,11 @@ class BillingAdminController extends Controller
             'metaTestEventCode' => PlatformSetting::get('meta_test_event_code', ''),
             // The token is never sent back to the browser, only whether one is saved.
             'metaTokenSet' => PlatformSetting::secret('meta_capi_token') !== null,
+            'paystationMerchantId' => PlatformSetting::get('paystation_merchant_id', ''),
+            'paystationMode' => PlatformSetting::get('paystation_mode', 'sandbox'),
+            'paystationPayWithCharge' => PlatformSetting::get('paystation_pay_with_charge') === '1',
+            'paystationPasswordSet' => PlatformSetting::secret('paystation_password') !== null,
+            'paystationIpnUrl' => route('paystation.ipn'),
         ]);
     }
 
@@ -160,6 +156,10 @@ class BillingAdminController extends Controller
             'metaTestEventCode' => ['nullable', 'string', 'max:40'],
             'metaToken' => ['nullable', 'string', 'max:600'],
             'clearMetaToken' => ['boolean'],
+            'paystationMerchantId' => ['nullable', 'string', 'max:60'],
+            'paystationPassword' => ['nullable', 'string', 'max:200'],
+            'paystationMode' => ['nullable', 'in:sandbox,live'],
+            'paystationPayWithCharge' => ['boolean'],
         ]);
 
         foreach ([
@@ -176,6 +176,15 @@ class BillingAdminController extends Controller
         }
 
         // Empty token field = keep the saved one (it is never shown again).
+        PlatformSetting::put('paystation_merchant_id', trim((string) ($data['paystationMerchantId'] ?? '')));
+        PlatformSetting::put('paystation_mode', $data['paystationMode'] ?? 'sandbox');
+        PlatformSetting::put('paystation_pay_with_charge', $request->boolean('paystationPayWithCharge') ? '1' : '0');
+
+        // Empty password field = keep the saved one (it is never shown again).
+        if (filled($data['paystationPassword'] ?? null)) {
+            PlatformSetting::putSecret('paystation_password', trim((string) $data['paystationPassword']));
+        }
+
         if ($request->boolean('clearMetaToken')) {
             PlatformSetting::putSecret('meta_capi_token', null);
         } elseif (filled($data['metaToken'] ?? null)) {

@@ -20,6 +20,11 @@ export default function PlatformSettings(props: {
     metaPixelId: string;
     metaTestEventCode: string;
     metaTokenSet: boolean;
+    paystationMerchantId: string;
+    paystationMode: 'sandbox' | 'live';
+    paystationPayWithCharge: boolean;
+    paystationPasswordSet: boolean;
+    paystationIpnUrl: string;
 }) {
     const form = useForm({
         paymentInstructions: props.paymentInstructions,
@@ -32,6 +37,10 @@ export default function PlatformSettings(props: {
         metaTestEventCode: props.metaTestEventCode,
         metaToken: '',
         clearMetaToken: false,
+        paystationMerchantId: props.paystationMerchantId,
+        paystationPassword: '',
+        paystationMode: props.paystationMode,
+        paystationPayWithCharge: props.paystationPayWithCharge,
     });
     const e = form.errors;
 
@@ -49,7 +58,12 @@ export default function PlatformSettings(props: {
                         ev.preventDefault();
                         form.post(update.url(), {
                             preserveScroll: true,
-                            onSuccess: () => form.setData('metaToken', ''),
+                            onSuccess: () =>
+                                form.setData({
+                                    ...form.data,
+                                    metaToken: '',
+                                    paystationPassword: '',
+                                }),
                         });
                     }}
                 >
@@ -123,6 +137,120 @@ export default function PlatformSettings(props: {
                                     placeholder="House, road, area, Dhaka"
                                 />
                             </Field>
+                        </div>
+                    </Panel>
+
+                    <Panel>
+                        <PanelHeader
+                            title="Online payment — PayStation"
+                            subtitle="Owners press “Pay online” on an invoice and pay by bKash, Nagad, Rocket, Upay or card; the invoice is marked paid after PayStation confirms it server-to-server"
+                        />
+                        <div className="grid gap-4 p-4 sm:grid-cols-2">
+                            <Field
+                                label="Merchant ID"
+                                error={e.paystationMerchantId}
+                            >
+                                <TextInput
+                                    value={form.data.paystationMerchantId}
+                                    onChange={(v) =>
+                                        form.setData(
+                                            'paystationMerchantId',
+                                            v.trim(),
+                                        )
+                                    }
+                                    placeholder="104-1653730183"
+                                />
+                            </Field>
+                            <Field
+                                label="Password"
+                                help={
+                                    props.paystationPasswordSet
+                                        ? 'Saved (stored encrypted). Leave empty to keep it.'
+                                        : 'From PayStation'
+                                }
+                                error={e.paystationPassword}
+                            >
+                                <TextInput
+                                    value={form.data.paystationPassword}
+                                    onChange={(v) =>
+                                        form.setData('paystationPassword', v)
+                                    }
+                                    placeholder={
+                                        props.paystationPasswordSet
+                                            ? '•••••••• saved'
+                                            : ''
+                                    }
+                                />
+                            </Field>
+                            <Field
+                                label="Environment"
+                                help="Test with Sandbox first, then switch to Live"
+                                error={e.paystationMode}
+                            >
+                                <select
+                                    value={form.data.paystationMode}
+                                    onChange={(ev) =>
+                                        form.setData(
+                                            'paystationMode',
+                                            ev.target.value as
+                                                | 'sandbox'
+                                                | 'live',
+                                        )
+                                    }
+                                    className="h-9 w-full rounded-md border bg-card px-3 text-sm"
+                                >
+                                    <option value="sandbox">
+                                        Sandbox (test money)
+                                    </option>
+                                    <option value="live">
+                                        Live (real payments)
+                                    </option>
+                                </select>
+                            </Field>
+                            <Field
+                                label="Gateway charge"
+                                help="Who pays PayStation’s fee"
+                                error={e.paystationPayWithCharge}
+                            >
+                                <select
+                                    value={
+                                        form.data.paystationPayWithCharge
+                                            ? '1'
+                                            : '0'
+                                    }
+                                    onChange={(ev) =>
+                                        form.setData(
+                                            'paystationPayWithCharge',
+                                            ev.target.value === '1',
+                                        )
+                                    }
+                                    className="h-9 w-full rounded-md border bg-card px-3 text-sm"
+                                >
+                                    <option value="0">We pay the charge</option>
+                                    <option value="1">
+                                        The customer pays the charge
+                                    </option>
+                                </select>
+                            </Field>
+                            <div className="flex flex-col gap-1 text-sm sm:col-span-2">
+                                <span className="font-medium">
+                                    IPN URL — send this to PayStation
+                                </span>
+                                <code className="rounded-md border bg-muted px-3 py-2 font-mono text-xs break-all select-all">
+                                    {props.paystationIpnUrl}
+                                </code>
+                                {props.paystationPasswordSet &&
+                                    props.paystationMerchantId && (
+                                        <span className="mt-1 flex items-center gap-1.5 text-success-ink">
+                                            <CheckCircle2 className="size-4" />
+                                            Online payment is on (
+                                            {props.paystationMode === 'live'
+                                                ? 'Live'
+                                                : 'Sandbox'}
+                                            )
+                                        </span>
+                                    )}
+                            </div>
                         </div>
                     </Panel>
 

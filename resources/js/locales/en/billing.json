@@ -60,8 +60,13 @@
         "bkash": "bKash",
         "nagad": "Nagad",
         "rocket": "Rocket",
-        "bank": "Bank transfer"
+        "bank": "Bank transfer",
+        "online": "Online ({{method}})"
     },
     "reference": "Transaction ID",
-    "referenceHelp": "From the SMS or receipt of your payment"
+    "referenceHelp": "From the SMS or receipt of your payment",
+    "payOnline": "Pay online",
+    "paidManually": "I paid manually",
+    "howToPayOnline": "Pay online in a minute, or send the money yourself",
+    "onlineText": "Press “Pay online” on the invoice: pay with bKash, Nagad, Rocket, Upay or a card on PayStation’s secure page. Your subscription is extended at once."
 }

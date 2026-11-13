@@ -16,6 +16,11 @@ Route::post('demo-request', [PublicController::class, 'lead'])->middleware('thro
 
 Route::post('locale', [LocaleController::class, 'update'])->name('locale.update');
 
+// PayStation sends the payer back here (GET or POST, maybe without our login
+// cookie): it only re-checks the payment with PayStation, then goes to Billing.
+Route::match(['get', 'post'], 'billing/paystation/return/{payment}', [BillingController::class, 'payOnlineReturn'])
+    ->middleware('throttle:30,1')->name('billing.paystation.return');
+
 Route::middleware(['auth', 'verified', 'tenant'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
@@ -43,6 +48,7 @@ Route::middleware(['auth', 'verified', 'tenant'])->group(function () {
     Route::get('billing', [BillingController::class, 'show'])->name('billing.index');
     Route::post('billing/plan', [BillingController::class, 'changePlan'])->name('billing.plan');
     Route::post('billing/invoices/{invoice}/pay', [BillingController::class, 'pay'])->name('billing.pay');
+    Route::post('billing/invoices/{invoice}/pay-online', [BillingController::class, 'payOnline'])->middleware('throttle:10,1')->name('billing.payOnline');
 
     Route::get('support', [SupportController::class, 'index'])->name('support.index');
     Route::post('support', [SupportController::class, 'store'])->name('support.store');
