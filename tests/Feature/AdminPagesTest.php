@@ -13,6 +13,7 @@ class AdminPagesTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @return array<string, array{string, string}> url, Inertia component */
     public static function pages(): array
     {
         return [
@@ -42,7 +43,13 @@ class AdminPagesTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->component($component));
     }
 
-    #[DataProvider('pages')]
+    /** @return array<string, array{string}> the same pages, url only */
+    public static function urls(): array
+    {
+        return array_map(fn (array $page) => [$page[0]], self::pages());
+    }
+
+    #[DataProvider('urls')]
     public function test_admin_page_requires_login(string $url): void
     {
         $this->get($url)->assertRedirect(route('login'));
