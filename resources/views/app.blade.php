@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="facebook-domain-verification" content="hrqckva0f54c773pw9tn7kzeukrivt" />
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
