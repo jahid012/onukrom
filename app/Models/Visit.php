@@ -20,11 +20,17 @@ class Visit extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Shop, $this>
+     */
     public function shop(): BelongsTo
     {
         return $this->belongsTo(Shop::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

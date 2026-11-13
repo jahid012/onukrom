@@ -12,11 +12,17 @@ class StockLevel extends Model
 
     protected $guarded = ['id'];
 
+    /**
+     * @return BelongsTo<Warehouse, $this>
+     */
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

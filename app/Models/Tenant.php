@@ -43,6 +43,9 @@ class Tenant extends Model
         return $key === null ? $all : ($all[$key] ?? null);
     }
 
+    /**
+     * @return HasMany<User, $this>
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

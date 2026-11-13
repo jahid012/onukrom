@@ -14,6 +14,9 @@ class PriceList extends Model
 
     protected $guarded = ['id'];
 
+    /**
+     * @return HasMany<PriceListItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(PriceListItem::class);

@@ -19,6 +19,7 @@ use App\Models\Visit;
 use App\Models\Warehouse;
 use App\Support\Phone;
 use App\Support\Tenancy\TenantContext;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -30,15 +31,30 @@ use Throwable;
  * Applies one outbox operation from the phone (spec §7.5 / §7.6 / §10.5).
  * Every operation runs in its own transaction and is idempotent by the
  * phone-generated ULID (+ client_version for orders).
+ *
+ * Operation payloads come straight from the phone, so `$data` is untrusted
+ * `array<mixed>` everywhere below.
+ *
+ * @phpstan-type PushResult array{entity: string, id: string, result: string, error?: array{code: string, message: string}, server?: array<string, mixed>}
+ * @phpstan-type LocationFix array{lat: float|null, lng: float|null, location_accuracy_m: int<0, max>|null, location_at: CarbonInterface|null, distance_from_shop_m: int|null, is_mock_location: bool}
  */
 class PushProcessor
 {
-    /** Price lists, loaded once per push batch. */
+    /** @var EloquentCollection<int, PriceList>|null Price lists, loaded once per push batch. */
     private ?EloquentCollection $priceLists = null;
 
     public function __construct(private readonly User $user) {}
 
-    /** @return array{entity: string, id: string, result: string, error?: array, server?: array} */
+    /** A record id sent by the phone; anything that is not a scalar id matches nothing. */
+    private static function key(mixed $value): string
+    {
+        return is_string($value) || is_int($value) ? (string) $value : '';
+    }
+
+    /**
+     * @param  array<mixed>  $op
+     * @return PushResult
+     */
     public function apply(array $op): array
     {
         $entity = (string) ($op['entity'] ?? '');
@@ -72,6 +88,10 @@ class PushProcessor
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $server
+     * @return PushResult
+     */
     private function ok(string $entity, string $id, array $server = [], string $result = 'accepted'): array
     {
         return ['entity' => $entity, 'id' => $id, 'result' => $result, 'server' => $server];
@@ -79,6 +99,10 @@ class PushProcessor
 
     /* ------------------------------------------------------------------ */
 
+    /**
+     * @param  array<mixed>  $data
+     * @return PushResult
+     */
     private function shop(string $id, array $data): array
     {
         $shop = Shop::withTrashed()->find($id);
@@ -110,6 +134,10 @@ class PushProcessor
         return $this->ok('shop', $id, ['status' => $shop->status, 'code' => $shop->code]);
     }
 
+    /**
+     * @param  array<mixed>  $data
+     * @return array<string, mixed>
+     */
     private function shopFields(array $data): array
     {
         $routeIds = SyncPullController::routeIds($this->user);
@@ -124,7 +152,7 @@ class PushProcessor
             'route_id' => $route,
             'lat' => $data['lat'] ?? null,
             'lng' => $data['lng'] ?? null,
-            'location_accuracy_m' => isset($data['accuracy_m']) ? (int) $data['accuracy_m'] : null,
+            'location_accuracy_m' => isset($data['accuracy_m']) ? max(0, (int) $data['accuracy_m']) : null,
         ], fn ($v) => $v !== null && $v !== '');
     }
 
@@ -137,6 +165,10 @@ class PushProcessor
 
     /* ------------------------------------------------------------------ */
 
+    /**
+     * @param  array<mixed>  $data
+     * @return PushResult
+     */
     private function order(string $id, int $version, array $data): array
     {
         $this->can('order.create');
@@ -153,7 +185,7 @@ class PushProcessor
             }
         }
 
-        $shop = Shop::find($data['shop_id'] ?? null);
+        $shop = Shop::find(self::key($data['shop_id'] ?? null));
 
         if (! $shop || $shop->status === 'inactive') {
             throw new PushRejected('SHOP_INACTIVE', 'This shop is not active.');
@@ -262,13 +294,20 @@ class PushProcessor
         return $this->ok('order', $id, $this->orderServer($order->refresh()));
     }
 
-    /** Live-location rules for orders (spec §10.5). Adds flags; may reject. */
+    /**
+     * Live-location rules for orders (spec §10.5). Adds flags; may reject.
+     *
+     * @param  array<mixed>  $data
+     * @param  list<string>  $flags
+     * @return LocationFix
+     */
     private function checkLocation(array $data, Shop $shop, array &$flags): array
     {
         $tenant = TenantContext::get();
         $lat = isset($data['lat']) ? (float) $data['lat'] : null;
         $lng = isset($data['lng']) ? (float) $data['lng'] : null;
-        $accuracy = isset($data['accuracy_m']) ? (int) round((float) $data['accuracy_m']) : null;
+        // Accuracy columns are unsigned: a bad negative reading from the phone must not fail the insert.
+        $accuracy = isset($data['accuracy_m']) ? max(0, (int) round((float) $data['accuracy_m'])) : null;
         $mock = (bool) ($data['is_mock'] ?? false);
 
         if ($lat === null || $lng === null) {
@@ -338,6 +377,7 @@ class PushProcessor
         return (int) $product->price;
     }
 
+    /** @return array<string, mixed> */
     private function orderServer(Order $order): array
     {
         return ['status' => $order->status, 'number' => $order->number, 'total' => (int) $order->total, 'flags' => $order->flags ?? []];
@@ -345,6 +385,10 @@ class PushProcessor
 
     /* ------------------------------------------------------------------ */
 
+    /**
+     * @param  array<mixed>  $data
+     * @return PushResult
+     */
     private function visit(string $id, array $data): array
     {
         if (Visit::whereKey($id)->exists()) {
@@ -358,7 +402,7 @@ class PushProcessor
             'no_order_reason' => $data['no_order_reason'] ?? null,
             'lat' => $data['lat'] ?? null,
             'lng' => $data['lng'] ?? null,
-            'accuracy_m' => isset($data['accuracy_m']) ? (int) $data['accuracy_m'] : null,
+            'accuracy_m' => isset($data['accuracy_m']) ? max(0, (int) $data['accuracy_m']) : null,
             'checked_in_at' => Carbon::parse($data['checked_in_at'] ?? now()),
         ]);
         $visit->id = $id;
@@ -367,11 +411,16 @@ class PushProcessor
         return $this->ok('visit', $id);
     }
 
-    /** Delivery man finished an order: delivered / partial / failed (spec §9.2). */
+    /**
+     * Delivery man finished an order: delivered / partial / failed (spec §9.2).
+     *
+     * @param  array<mixed>  $data
+     * @return PushResult
+     */
     private function delivery(string $id, array $data): array
     {
         $this->can('delivery.complete');
-        $order = Order::with('items', 'trip', 'shop')->find($data['order_id'] ?? $id);
+        $order = Order::with('items', 'trip', 'shop')->find(self::key($data['order_id'] ?? $id));
 
         if (! $order || $order->trip?->delivery_user_id !== $this->user->id) {
             throw new PushRejected('PERMISSION_DENIED', 'This order is not on your trip.');
@@ -402,11 +451,12 @@ class PushProcessor
             $value += $qty * $item->unit_price;
 
             if ($warehouse && $qty > 0) {
-                StockLevel::where('warehouse_id', $warehouse)->where('product_id', $item->product_id)
-                    ->update([
-                        'on_hand' => DB::raw('on_hand - '.$qty),
-                        'reserved' => DB::raw('CASE WHEN reserved > '.$qty.' THEN reserved - '.$qty.' ELSE 0 END'),
-                    ]);
+                // Row is locked for this transaction; both columns are unsigned, so never go below 0.
+                $level = StockLevel::where('warehouse_id', $warehouse)->where('product_id', $item->product_id)->lockForUpdate()->first();
+                $level?->update([
+                    'on_hand' => max(0, $level->on_hand - $qty),
+                    'reserved' => max(0, $level->reserved - $qty),
+                ]);
                 StockMovement::create(['warehouse_id' => $warehouse, 'product_id' => $item->product_id, 'qty' => -$qty, 'type' => 'deliver', 'reference' => $order->number, 'user_id' => $this->user->id]);
             }
         }
@@ -421,6 +471,10 @@ class PushProcessor
         return $this->ok('delivery', $id, ['status' => $order->status, 'total' => (int) $order->total]);
     }
 
+    /**
+     * @param  array<mixed>  $data
+     * @return PushResult
+     */
     private function collection(string $id, array $data): array
     {
         $this->can('collection.create');
@@ -430,7 +484,7 @@ class PushProcessor
         }
 
         $amount = (int) ($data['amount'] ?? 0);
-        $shop = Shop::find($data['shop_id'] ?? null);
+        $shop = Shop::find(self::key($data['shop_id'] ?? null));
 
         if ($amount <= 0 || ! $shop) {
             throw new PushRejected('VALIDATION', 'Amount and shop are required.');
@@ -473,9 +527,13 @@ class PushProcessor
         return $this->ok('collection', $id, ['number' => $number, 'status' => 'pending']);
     }
 
+    /**
+     * @param  array<mixed>  $data
+     * @return PushResult
+     */
     private function tripStatus(string $id, array $data): array
     {
-        $trip = Trip::where('delivery_user_id', $this->user->id)->find($data['trip_id'] ?? $id);
+        $trip = Trip::where('delivery_user_id', $this->user->id)->find(self::key($data['trip_id'] ?? $id));
         $status = $data['status'] ?? '';
 
         if (! $trip || ! in_array($status, ['loaded', 'in_progress'], true)) {
@@ -489,6 +547,10 @@ class PushProcessor
         return $this->ok('trip_status', $id, ['status' => $trip->status]);
     }
 
+    /**
+     * @param  array<mixed>  $data
+     * @return PushResult
+     */
     private function pings(string $id, array $data): array
     {
         foreach (array_slice((array) ($data['pings'] ?? []), 0, 500) as $p) {
@@ -498,7 +560,7 @@ class PushProcessor
                 'ref_id' => $p['ref_id'] ?? null,
                 'lat' => $p['lat'],
                 'lng' => $p['lng'],
-                'accuracy_m' => isset($p['accuracy_m']) ? (int) $p['accuracy_m'] : null,
+                'accuracy_m' => isset($p['accuracy_m']) ? max(0, (int) $p['accuracy_m']) : null,
                 'is_mock' => (bool) ($p['is_mock'] ?? false),
                 'recorded_at' => Carbon::parse($p['recorded_at'] ?? now()),
             ]);

@@ -20,21 +20,33 @@ class Collection extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Shop, $this>
+     */
     public function shop(): BelongsTo
     {
         return $this->belongsTo(Shop::class);
     }
 
+    /**
+     * @return BelongsTo<Order, $this>
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Deposit, $this>
+     */
     public function deposit(): BelongsTo
     {
         return $this->belongsTo(Deposit::class);

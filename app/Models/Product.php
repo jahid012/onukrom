@@ -22,11 +22,17 @@ class Product extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Category, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return HasMany<StockLevel, $this>
+     */
     public function stockLevels(): HasMany
     {
         return $this->hasMany(StockLevel::class);

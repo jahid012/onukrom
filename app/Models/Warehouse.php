@@ -13,6 +13,9 @@ class Warehouse extends Model
 
     protected $guarded = ['id'];
 
+    /**
+     * @return HasMany<StockLevel, $this>
+     */
     public function levels(): HasMany
     {
         return $this->hasMany(StockLevel::class);

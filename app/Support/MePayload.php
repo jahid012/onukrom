@@ -8,6 +8,7 @@ use App\Support\Tenancy\TenantContext;
 /** The "me" payload sent at login and on every sync (spec Appendix A.2). */
 class MePayload
 {
+    /** @return array<string, mixed> */
     public static function for(User $user): array
     {
         $tenant = TenantContext::get() ?? $user->tenant;

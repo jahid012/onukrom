@@ -11,3 +11,7 @@ parameters:
         - routes/
 
     level: 7
+
+    # Read model casts from the body of casts(): our models declare them there,
+    # so without this every datetime/array cast is seen as a raw string column.
+    parseModelCastsMethod: true

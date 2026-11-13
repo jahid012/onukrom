@@ -37,7 +37,10 @@ class AdminActions
 {
     public function __construct(private readonly User $user) {}
 
-    /** @return mixed the value the store action returns (new id, password…) */
+    /**
+     * @param  array<int|string, mixed>  $args
+     * @return mixed the value the store action returns (new id, password…)
+     */
     public function run(string $action, array $args): mixed
     {
         // Only the protected methods below are actions; helpers are private.
@@ -92,6 +95,7 @@ class AdminActions
 
     /* ---------------------------- orders & trips ---------------------------- */
 
+    /** @param  list<string>  $numbers */
     protected function approveOrders(array $numbers): void
     {
         $this->can('order.approve');
@@ -106,6 +110,7 @@ class AdminActions
         }
     }
 
+    /** @param  list<string>  $numbers */
     protected function rejectOrders(array $numbers, string $reason): void
     {
         $this->can('order.approve');
@@ -118,6 +123,7 @@ class AdminActions
         Order::where('number', $number)->where('status', 'failed')->update(['status' => 'approved', 'trip_id' => null]);
     }
 
+    /** @param  list<string>  $numbers */
     protected function assignToTrip(array $numbers, string $tripNumber): void
     {
         $this->can('delivery.assign');
@@ -126,6 +132,7 @@ class AdminActions
         Order::whereIn('number', $numbers)->where('status', 'approved')->update(['trip_id' => $trip->id, 'status' => 'dispatched']);
     }
 
+    /** @param  array<string, mixed>  $input */
     protected function createTrip(array $input): string
     {
         $this->can('delivery.assign');
@@ -247,6 +254,7 @@ class AdminActions
 
     /* ---------------------------- shops & territory ------------------------- */
 
+    /** @param  array<string, mixed>  $input */
     protected function saveShop(?string $id, array $input): string
     {
         $this->can('shop.edit');
@@ -288,6 +296,7 @@ class AdminActions
         return 'SH-'.str_pad((string) ($max + 1), 5, '0', STR_PAD_LEFT);
     }
 
+    /** @param  list<array<string, mixed>>  $rows */
     protected function importShops(array $rows): int
     {
         foreach ($rows as $row) {
@@ -297,6 +306,7 @@ class AdminActions
         return count($rows);
     }
 
+    /** @param  list<string>  $ids */
     protected function setShopStatus(array $ids, string $status): void
     {
         $this->can($status === 'active' ? 'shop.approve' : 'shop.edit');
@@ -308,10 +318,11 @@ class AdminActions
         Shop::whereIn('id', $ids)->get()->each->update(['status' => $status]);
     }
 
+    /** @param  list<string>  $ids */
     protected function moveShops(array $ids, string $route): void
     {
         $this->can('shop.edit');
-        $routeId = $this->routeByName($route)?->id ?? throw new AdminError('Route not found.', 422);
+        $routeId = $this->routeByName($route)->id ?? throw new AdminError('Route not found.', 422);
         Shop::whereIn('id', $ids)->get()->each->update(['route_id' => $routeId]);
     }
 
@@ -323,6 +334,7 @@ class AdminActions
         return Area::create(['type' => 'area', 'parent_id' => $zone->id, 'name' => trim($name), 'sort' => Area::max('sort') + 1])->id;
     }
 
+    /** @param  array<string, mixed>  $input */
     protected function saveRoute(string $areaId, ?string $routeId, array $input): string
     {
         $this->can('area.manage');
@@ -363,6 +375,7 @@ class AdminActions
 
     /* ---------------------------- catalog, prices, stock -------------------- */
 
+    /** @param  array<string, mixed>  $input */
     protected function saveProduct(?string $id, array $input): string
     {
         $this->can('product.manage');
@@ -417,6 +430,10 @@ class AdminActions
         $product = Product::findOrFail($productId);
         $to = self::paisa($price);
 
+        if ($to < 0) {
+            throw new AdminError('Price cannot be negative.', 422);
+        }
+
         if ($listId === AdminState::DEFAULT_LIST) {
             if ($product->price !== $to) {
                 PriceChange::create(['product_id' => $product->id, 'from_price' => $product->price, 'to_price' => $to, 'user_id' => $this->user->id]);
@@ -450,6 +467,7 @@ class AdminActions
             });
     }
 
+    /** @param  array<string, mixed>  $input */
     protected function addPriceList(array $input): string
     {
         $this->can('price.manage');
@@ -498,6 +516,7 @@ class AdminActions
 
     /* ---------------------------- staff, roles, settings -------------------- */
 
+    /** @param  array<string, mixed>  $input */
     private function syncPerson(User $person, array $input): void
     {
         if (isset($input['roles'])) {
@@ -509,7 +528,11 @@ class AdminActions
         }
     }
 
-    /** Invite by phone: an 8-character password goes out by SMS and is shown once. */
+    /**
+     * Invite by phone: an 8-character password goes out by SMS and is shown once.
+     *
+     * @param  array<string, mixed>  $input
+     */
     protected function inviteStaff(array $input): string
     {
         $this->can('staff.manage');
@@ -540,6 +563,7 @@ class AdminActions
         return $password;
     }
 
+    /** @param  array<string, mixed>  $input */
     protected function updateStaff(string $code, array $input): void
     {
         $this->can('staff.manage');
@@ -597,6 +621,7 @@ class AdminActions
         return $password;
     }
 
+    /** @param  list<string>  $grants */
     protected function saveRole(string $key, array $grants): void
     {
         $this->can('role.manage');
@@ -634,6 +659,7 @@ class AdminActions
         }
     }
 
+    /** @param  array<string, mixed>  $settings */
     protected function saveSettings(array $settings): void
     {
         $this->can('settings.manage');
@@ -646,7 +672,6 @@ class AdminActions
             $rules[$k] = match (true) {
                 is_bool($default) => (bool) $v,
                 is_int($default) => (int) $v,
-                is_float($default) => (float) $v,
                 default => (string) $v,
             };
         }

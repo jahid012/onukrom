@@ -18,7 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
 /**
  * Owner / manager (admin panel) or field staff (SR / DM, mobile app).
  *
- * @property int $id
+ * @property positive-int $id
  * @property int|null $tenant_id
  * @property string $name
  * @property string|null $phone
@@ -46,17 +46,27 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    /**
+     * @return BelongsToMany<Role, $this>
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }
 
-    /** Routes (areas of type "route") this person covers. */
+    /**
+     * Routes (areas of type "route") this person covers.
+     *
+     * @return BelongsToMany<Area, $this>
+     */
     public function routes(): BelongsToMany
     {
         return $this->belongsToMany(Area::class, 'area_user');
     }
 
+    /**
+     * @return HasMany<Device, $this>
+     */
     public function devices(): HasMany
     {
         return $this->hasMany(Device::class);
@@ -65,13 +75,13 @@ class User extends Authenticatable implements MustVerifyEmail
     /** @return list<string> */
     public function roleKeys(): array
     {
-        return $this->roles->pluck('key')->all();
+        return array_values($this->roles->map(fn (Role $r) => $r->key)->all());
     }
 
     /** @return list<string> */
     public function permissions(): array
     {
-        return $this->roles->flatMap(fn (Role $r) => $r->permissions)->unique()->values()->all();
+        return array_values($this->roles->flatMap(fn (Role $r) => $r->permissions)->unique()->all());
     }
 
     public function hasPermission(string $permission): bool

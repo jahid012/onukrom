@@ -23,31 +23,49 @@ class Area extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Area, $this>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Area::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<Area, $this>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(Area::class, 'parent_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function salesRep(): BelongsTo
     {
         return $this->belongsTo(User::class, 'sr_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function deliveryMan(): BelongsTo
     {
         return $this->belongsTo(User::class, 'dm_id');
     }
 
+    /**
+     * @return HasMany<Shop, $this>
+     */
     public function shops(): HasMany
     {
         return $this->hasMany(Shop::class, 'route_id');
     }
 
+    /**
+     * @return BelongsToMany<User, $this>
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'area_user');

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Tenant;
+use App\Models\User;
 use App\Support\ApiError;
 use App\Support\Tenancy\TenantContext;
 use Closure;
@@ -22,8 +23,8 @@ class ResolveApiTenant
         $user = $request->user('sanctum');
         $code = strtolower(trim((string) $request->header('X-Tenant')));
 
-        if ($user) {
-            $tenant = Tenant::find($user->tenant_id);
+        if ($user instanceof User) {
+            $tenant = $user->tenant;
 
             if (! $tenant || ($code !== '' && $code !== $tenant->code)) {
                 return ApiError::response('UNAUTHENTICATED', 'Please log in again.', 401);

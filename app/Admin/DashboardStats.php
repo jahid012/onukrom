@@ -6,6 +6,7 @@ use App\Models\Area;
 use App\Models\Collection;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\Shop;
 use App\Models\Trip;
 use App\Models\User;
@@ -28,6 +29,14 @@ class DashboardStats
      */
     public function __construct(private readonly array $codes, private readonly array $routeNames) {}
 
+    /**
+     * @param  SupportCollection<int, Order>  $orders
+     * @param  SupportCollection<int, Shop>  $shops
+     * @param  SupportCollection<int, User>  $users
+     * @param  SupportCollection<int, Product>  $products
+     * @param  SupportCollection<int, Area>  $areas
+     * @return array<string, mixed>
+     */
     public function build(SupportCollection $orders, SupportCollection $shops, SupportCollection $users, SupportCollection $products, SupportCollection $areas): array
     {
         $yearAgo = now()->subMonths(12)->startOfMonth();
@@ -38,7 +47,7 @@ class DashboardStats
             ->get(['id', 'status', 'ordered_at', 'delivered_at', 'total', 'sales_user_id', 'shop_id'])
             ->map(fn (Order $o) => (object) [
                 'status' => $o->status,
-                'ordered_at' => $o->ordered_at?->getTimestamp(),
+                'ordered_at' => $o->ordered_at->getTimestamp(),
                 'delivered_at' => $o->delivered_at?->getTimestamp(),
                 'total' => (int) $o->total,
                 'sales_user_id' => $o->sales_user_id,
@@ -50,7 +59,7 @@ class DashboardStats
             ->map(fn (Collection $c) => (object) [
                 'amount' => (int) $c->amount,
                 'method' => $c->method,
-                'collected_at' => $c->collected_at?->getTimestamp(),
+                'collected_at' => $c->collected_at->getTimestamp(),
                 'status' => $c->status,
                 'deposit_id' => $c->deposit_id,
             ]);
@@ -85,7 +94,7 @@ class DashboardStats
             return [
                 'name' => $u->name,
                 'code' => $this->codes[$u->id] ?? '',
-                'route' => $route?->name ?? '—',
+                'route' => $route->name ?? '—',
                 'visited' => $visited->count(),
                 'planned' => $shops->whereIn('route_id', $mine->pluck('id'))->where('status', 'active')->count(),
                 'orders' => $myOrders->count(),
@@ -178,20 +187,37 @@ class DashboardStats
         return array_map(fn ($i) => [$day->subDays($i)->getTimestamp(), $day->subDays($i - 1)->getTimestamp(), $day->subDays($i)->format('Y-m-d')], range($days - 1, 0));
     }
 
-    private function between($at, array $b): bool
+    /** Is the timestamp inside [from, to)? */
+    private function between(?int $at, int $from, int $to): bool
     {
-        return $at !== null && $at >= $b[0] && $at < $b[1];
+        return $at !== null && $at >= $from && $at < $to;
     }
 
+    /**
+     * @template THistory of \stdClass
+     *
+     * @param  list<array{0: int, 1: int, 2: string}>  $buckets
+     * @param  SupportCollection<int, THistory>  $history
+     * @return list<array{date: string, ordered: float|int, delivered: float|int}>
+     */
     private function trend(array $buckets, SupportCollection $history, string $period): array
     {
         return array_map(fn ($b) => [
             'date' => $b[2],
-            'ordered' => AdminState::taka($history->filter(fn ($o) => in_array($o->status, self::LIVE, true) && $this->between($o->ordered_at, $b))->sum('total')),
-            'delivered' => AdminState::taka($history->filter(fn ($o) => in_array($o->status, self::DONE, true) && $this->between($o->delivered_at, $b))->sum('total')),
+            'ordered' => AdminState::taka($history->filter(fn ($o) => in_array($o->status, self::LIVE, true) && $this->between($o->ordered_at, $b[0], $b[1]))->sum('total')),
+            'delivered' => AdminState::taka($history->filter(fn ($o) => in_array($o->status, self::DONE, true) && $this->between($o->delivered_at, $b[0], $b[1]))->sum('total')),
         ], $buckets);
     }
 
+    /**
+     * @template THistory of \stdClass
+     * @template TCollection of \stdClass
+     *
+     * @param  list<array{0: int, 1: int, 2: string}>  $buckets
+     * @param  SupportCollection<int, THistory>  $history
+     * @param  SupportCollection<int, TCollection>  $collections
+     * @return list<array<string, mixed>>
+     */
     private function kpis(string $period, array $buckets, SupportCollection $history, SupportCollection $collections, int $dueNow): array
     {
         $start = $buckets[0][0];
@@ -199,33 +225,33 @@ class DashboardStats
         $cur = [$start, PHP_INT_MAX];
         $prev = [$prevStart, $start];
 
-        $live = fn (array $range) => $history->filter(fn ($o) => in_array($o->status, self::LIVE, true) && $this->between($o->ordered_at, $range));
-        $paid = fn (array $range) => $collections->filter(fn ($c) => $this->between($c->collected_at, $range))->sum('amount');
-        $delivered = fn (array $range) => $history->filter(fn ($o) => in_array($o->status, self::DONE, true) && $this->between($o->delivered_at, $range))->sum('total');
+        $live = fn (int $from, int $to) => $history->filter(fn ($o) => in_array($o->status, self::LIVE, true) && $this->between($o->ordered_at, $from, $to));
+        $paid = fn (int $from, int $to) => $collections->filter(fn ($c) => $this->between($c->collected_at, $from, $to))->sum('amount');
+        $delivered = fn (int $from, int $to) => $history->filter(fn ($o) => in_array($o->status, self::DONE, true) && $this->between($o->delivered_at, $from, $to))->sum('total');
         $change = fn ($a, $b) => $b > 0 ? round(($a - $b) / $b * 100, 1) : 0;
 
         // Dues back then = dues now − delivered since + collected since.
-        $dueAt = fn (int $at) => $dueNow - $delivered([$at, PHP_INT_MAX]) + $paid([$at, PHP_INT_MAX]);
+        $dueAt = fn (int $at) => $dueNow - $delivered($at, PHP_INT_MAX) + $paid($at, PHP_INT_MAX);
         $duePrev = $dueAt($start);
 
         return [
             [
                 'key' => 'sales', 'money' => true, 'goodWhenUp' => true,
-                'value' => AdminState::taka($live($cur)->sum('total')),
-                'change' => $change($live($cur)->sum('total'), $live($prev)->sum('total')),
-                'spark' => array_map(fn ($b) => AdminState::taka($live($b)->sum('total')), $buckets),
+                'value' => AdminState::taka($live(...$cur)->sum('total')),
+                'change' => $change($live(...$cur)->sum('total'), $live(...$prev)->sum('total')),
+                'spark' => array_map(fn ($b) => AdminState::taka($live($b[0], $b[1])->sum('total')), $buckets),
             ],
             [
                 'key' => 'orders', 'money' => false, 'goodWhenUp' => true,
-                'value' => $live($cur)->count(),
-                'change' => $change($live($cur)->count(), $live($prev)->count()),
-                'spark' => array_map(fn ($b) => $live($b)->count(), $buckets),
+                'value' => $live(...$cur)->count(),
+                'change' => $change($live(...$cur)->count(), $live(...$prev)->count()),
+                'spark' => array_map(fn ($b) => $live($b[0], $b[1])->count(), $buckets),
             ],
             [
                 'key' => 'collections', 'money' => true, 'goodWhenUp' => true,
-                'value' => AdminState::taka($paid($cur)),
-                'change' => $change($paid($cur), $paid($prev)),
-                'spark' => array_map(fn ($b) => AdminState::taka($paid($b)), $buckets),
+                'value' => AdminState::taka($paid(...$cur)),
+                'change' => $change($paid(...$cur), $paid(...$prev)),
+                'spark' => array_map(fn ($b) => AdminState::taka($paid($b[0], $b[1])), $buckets),
             ],
             [
                 'key' => 'dues', 'money' => true, 'goodWhenUp' => false,
@@ -236,7 +262,11 @@ class DashboardStats
         ];
     }
 
-    private function topProducts(SupportCollection $products): SupportCollection
+    /**
+     * @param  SupportCollection<int, Product>  $products
+     * @return array<int, array<string, mixed>>
+     */
+    private function topProducts(SupportCollection $products): array
     {
         $items = OrderItem::whereHas('order', fn ($q) => $q->where('ordered_at', '>=', now()->subDays(30))->whereIn('status', self::LIVE))
             ->get(['product_id', 'qty', 'line_total']);
@@ -246,12 +276,12 @@ class DashboardStats
             $p = $byId[$id] ?? null;
 
             return [
-                'name' => $p?->name ?? '—',
-                'name_bn' => $p?->name_bn ?? $p?->name ?? '—',
-                'sku' => $p?->sku ?? '',
+                'name' => $p->name ?? '—',
+                'name_bn' => $p->name_bn ?? $p->name ?? '—',
+                'sku' => $p->sku ?? '',
                 'sales' => AdminState::taka($rows->sum('line_total')),
-                'cartons' => (int) floor($rows->sum('qty') / max(1, $p?->pack_size ?? 1)),
+                'cartons' => (int) floor($rows->sum('qty') / max(1, $p->pack_size ?? 1)),
             ];
-        })->sortByDesc('sales')->take(5)->values();
+        })->sortByDesc('sales')->take(5)->values()->all();
     }
 }

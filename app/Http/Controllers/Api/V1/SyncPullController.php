@@ -78,8 +78,8 @@ class SyncPullController extends Controller
         return response()->json(['data' => [
             'entity' => $entity,
             'mode' => 'delta',
-            'items' => $rows->map(fn ($row) => $this->present($entity, $row))->values(),
-            'next_cursor' => $last ? base64_encode(json_encode([$last->updated_at->format('Y-m-d H:i:s.u'), $last->id])) : $request->query('cursor'),
+            'items' => $rows->map(fn (Shop|Product|Order $row) => $this->present($row))->values(),
+            'next_cursor' => $last ? base64_encode(json_encode([$last->updated_at->format('Y-m-d H:i:s.u'), $last->id], JSON_THROW_ON_ERROR)) : $request->query('cursor'),
             'has_more' => $hasMore,
         ]]);
     }
@@ -98,19 +98,23 @@ class SyncPullController extends Controller
             : [null, ''];
     }
 
-    /** Routes this user works on (as SR or DM). @return list<string> */
+    /**
+     * Routes this user works on (as SR or DM).
+     *
+     * @return list<string>
+     */
     public static function routeIds(User $user): array
     {
-        if ($user->hasPermission('shop.view_all')) {
-            return Area::where('type', 'route')->pluck('id')->all();
-        }
+        $routes = Area::where('type', 'route')
+            ->unless($user->hasPermission('shop.view_all'), fn (Builder $query) => $query
+                ->where(fn (Builder $q) => $q->where('sr_id', $user->id)->orWhere('dm_id', $user->id)
+                    ->orWhereIn('id', $user->routes()->pluck('areas.id'))))
+            ->get(['id']);
 
-        return Area::where('type', 'route')
-            ->where(fn (Builder $q) => $q->where('sr_id', $user->id)->orWhere('dm_id', $user->id)
-                ->orWhereIn('id', $user->routes()->pluck('areas.id')))
-            ->pluck('id')->all();
+        return array_values($routes->map(fn (Area $r) => $r->id)->all());
     }
 
+    /** @return Builder<Shop>|Builder<Product>|Builder<Order> */
     private function deltaQuery(string $entity, User $user): Builder
     {
         return match ($entity) {
@@ -121,13 +125,15 @@ class SyncPullController extends Controller
             'orders' => Order::with('items', 'trip:id,number')
                 ->where('sales_user_id', $user->id)
                 ->where('created_at', '>=', now()->subDays(30)),
+            default => throw new \InvalidArgumentException("Not a delta entity: {$entity}"),
         };
     }
 
-    private function present(string $entity, $row): array
+    /** @return array<string, mixed> */
+    private function present(Shop|Product|Order $row): array
     {
-        return match ($entity) {
-            'shops' => [
+        return match (true) {
+            $row instanceof Shop => [
                 'id' => $row->id,
                 'deleted' => $row->trashed() || $row->status === 'inactive',
                 'route_id' => $row->route_id,
@@ -144,7 +150,7 @@ class SyncPullController extends Controller
                 'status' => $row->status,
                 'last_order_at' => $row->last_order_at?->toIso8601ZuluString(),
             ],
-            'products' => [
+            $row instanceof Product => [
                 'id' => $row->id,
                 'deleted' => $row->trashed(),
                 'category_id' => $row->category_id,
@@ -157,10 +163,11 @@ class SyncPullController extends Controller
                 'price' => (int) $row->price,
                 'active' => (bool) $row->active,
             ],
-            'orders' => self::presentOrder($row),
+            default => self::presentOrder($row),
         };
     }
 
+    /** @return array<string, mixed> */
     public static function presentOrder(Order $order): array
     {
         return [
@@ -189,6 +196,7 @@ class SyncPullController extends Controller
         ];
     }
 
+    /** @return array<int, array<string, mixed>> */
     private function full(string $entity, User $user): array
     {
         return match ($entity) {
@@ -204,9 +212,11 @@ class SyncPullController extends Controller
             ])->all(),
             'stock' => $this->stock(),
             'trips' => $this->trips($user),
+            default => throw new \InvalidArgumentException("Not a full entity: {$entity}"),
         };
     }
 
+    /** @return array<int, array{product_id: string, available: int}> */
     private function stock(): array
     {
         $main = Warehouse::where('type', 'main')->value('id');
@@ -215,7 +225,11 @@ class SyncPullController extends Controller
             ->map(fn (StockLevel $s) => ['product_id' => $s->product_id, 'available' => (int) ($s->on_hand - $s->reserved)])->all();
     }
 
-    /** Delivery man: open trips with their orders, items and shop details. */
+    /**
+     * Delivery man: open trips with their orders, items and shop details.
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function trips(User $user): array
     {
         if (! $user->hasPermission('app.delivery')) {

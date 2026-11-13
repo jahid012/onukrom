@@ -13,11 +13,17 @@ class PriceListItem extends Model
 
     protected $guarded = ['id'];
 
+    /**
+     * @return BelongsTo<PriceList, $this>
+     */
     public function priceList(): BelongsTo
     {
         return $this->belongsTo(PriceList::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

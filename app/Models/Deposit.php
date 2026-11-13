@@ -21,11 +21,17 @@ class Deposit extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<Collection, $this>
+     */
     public function collections(): HasMany
     {
         return $this->hasMany(Collection::class);

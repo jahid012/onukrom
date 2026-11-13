@@ -24,16 +24,25 @@ class Shop extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Area, $this>
+     */
     public function route(): BelongsTo
     {
         return $this->belongsTo(Area::class, 'route_id');
     }
 
+    /**
+     * @return HasMany<Order, $this>
+     */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

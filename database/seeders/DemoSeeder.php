@@ -48,6 +48,12 @@ class DemoSeeder extends Seeder
     /** @var array<string, Product> products by demo id (p1…) */
     private array $products = [];
 
+    /** @var array<string, Category> categories by key */
+    private array $categories = [];
+
+    /** @var array<string, Trip> trips by number */
+    private array $trips = [];
+
     public function run(): void
     {
         $tenant = Tenant::create([
@@ -74,11 +80,10 @@ class DemoSeeder extends Seeder
         }
     }
 
-    private function people(): void
+    /** @return list<array{string, string, list<string>, string, string|null, int|null}> code, name, roles, phone, admin email, minutes since last sync */
+    private static function peopleData(): array
     {
-        $roles = Role::all()->keyBy('key');
-
-        $people = [
+        return [
             ['OW01', 'Rahim Uddin', ['owner'], '01711000001', 'test@example.com', null],
             ['MG01', 'Selina Parvin', ['manager'], '01711000002', 'manager@example.com', null],
             ['SR07', 'Rafiq Hasan', ['sr'], '01712111222', null, 2],
@@ -93,10 +98,14 @@ class DemoSeeder extends Seeder
             ['DM04', 'Sumon Das', ['dm'], '01721909090', null, 1610],
             ['SR05', 'Liton Kumar', ['sr'], '01722131313', null, null],
         ];
+    }
 
+    private function people(): void
+    {
+        $roles = Role::all()->keyBy('key');
         $models = ['Redmi 9A', 'Samsung A05', 'Realme C11', 'Oppo A16', 'Vivo Y12', 'Redmi 10C', 'Samsung A04', 'Realme C30', 'Tecno Spark 8'];
 
-        foreach ($people as $i => [$code, $name, $roleKeys, $phone, $email, $syncMin]) {
+        foreach (self::peopleData() as $i => [$code, $name, $roleKeys, $phone, $email, $syncMin]) {
             $user = User::create([
                 'name' => $name,
                 'employee_code' => $code,
@@ -127,9 +136,10 @@ class DemoSeeder extends Seeder
         }
     }
 
-    private function territory(): void
+    /** @return array<string, array<string, list<array{string, string, list<string>, string|null, string}>>> zone → area → [route, code, visit days, SR, DM] */
+    private static function territoryData(): array
     {
-        $tree = [
+        return [
             'Dhaka North' => [
                 'Mirpur' => [['Mirpur-10', 'MR-10', ['sat', 'tue'], 'SR07', 'DM01'], ['Mirpur-2', 'MR-02', ['sun', 'wed'], 'SR07', 'DM01'], ['Pallabi', 'MR-PL', ['mon', 'thu'], 'SR21', 'DM01']],
                 'Uttara' => [['Uttara Sec-7', 'UT-07', ['sat', 'tue'], 'SR03', 'DM02'], ['Uttara Sec-11', 'UT-11', ['sun', 'wed'], 'SR03', 'DM02']],
@@ -140,10 +150,13 @@ class DemoSeeder extends Seeder
                 'Mohammadpur' => [['Mohammadpur', 'MP-01', ['sat', 'tue'], 'SR09', 'DM03']],
             ],
         ];
+    }
 
+    private function territory(): void
+    {
         $sort = 0;
 
-        foreach ($tree as $zoneName => $areas) {
+        foreach (self::territoryData() as $zoneName => $areas) {
             $zone = Area::create(['type' => 'zone', 'name' => $zoneName, 'sort' => $sort++]);
 
             foreach ($areas as $areaName => $routes) {
@@ -172,10 +185,8 @@ class DemoSeeder extends Seeder
 
     private function catalog(): void
     {
-        $categories = [];
-
         foreach ([['drinks', 'Drinks', 'পানীয়'], ['biscuits', 'Biscuits', 'বিস্কুট'], ['snacks', 'Snacks', 'স্ন্যাকস'], ['soap', 'Soap & care', 'সাবান ও যত্ন'], ['noodles', 'Noodles', 'নুডলস']] as $i => [$key, $name, $bn]) {
-            $categories[$key] = Category::create(['key' => $key, 'name' => $name, 'name_bn' => $bn, 'sort' => $i]);
+            $this->categories[$key] = Category::create(['key' => $key, 'name' => $name, 'name_bn' => $bn, 'sort' => $i]);
         }
 
         $products = [
@@ -199,7 +210,7 @@ class DemoSeeder extends Seeder
 
         foreach ($products as [$key, $sku, $name, $bn, $brand, $cat, $pack, $mrp, $price, $onHand, $reserved, $reorder, $active, $hue]) {
             $product = Product::create([
-                'category_id' => $categories[$cat]->id,
+                'category_id' => $this->categories[$cat]->id,
                 'sku' => $sku,
                 'name' => $name,
                 'name_bn' => $bn,
@@ -236,9 +247,10 @@ class DemoSeeder extends Seeder
         }
     }
 
-    private function shopsAndSales(): void
+    /** @return list<array{string, string, string, string, string, string, string, string, int, int, int|null, bool, string, string|null}> id, code, name, name_bn, owner, phone, route, category, due, credit limit, days since last order, has location, status, added by */
+    private static function shopData(): array
     {
-        $shops = [
+        return [
             ['s1', 'SH-04811', 'Hossain Store', 'হোসেন স্টোর', 'Md. Hossain', '01811111111', 'Mirpur-10', 'grocery', 3200, 20000, 3, true, 'active', null],
             ['s2', 'SH-04812', 'Nadia Pharmacy', 'নাদিয়া ফার্মেসি', 'Nadia Islam', '01999999999', 'Mirpur-10', 'pharmacy', 0, 15000, 1, true, 'active', null],
             ['s3', 'SH-03920', 'Bismillah Traders', 'বিসমিল্লাহ ট্রেডার্স', 'Abdul Karim', '01712345678', 'Uttara Sec-7', 'wholesale', 48600, 40000, 2, true, 'active', null],
@@ -252,49 +264,12 @@ class DemoSeeder extends Seeder
             ['s11', 'SH-02744', 'Joy Pharmacy', 'জয় ফার্মেসি', 'Joydeb Saha', '01799554433', 'Pallabi', 'pharmacy', 0, 12000, 9, true, 'inactive', null],
             ['s12', 'SH-05003', 'Tasnim Store', 'তাসনিম স্টোর', 'Tasnim Hasan', '01866778899', 'Badda', 'grocery', 0, 8000, null, false, 'pending_approval', 'SR12'],
         ];
+    }
 
-        // Around Mirpur, Dhaka — demo coordinates for the shop map.
-        $base = [23.8069, 90.3687];
-
-        foreach ($shops as $i => [$key, $code, $name, $bn, $owner, $phone, $route, $cat, $due, $limit, $lastDays, $hasLoc, $status, $addedBy]) {
-            $this->shops[$key] = Shop::create([
-                'route_id' => $this->routes[$route]->id,
-                'code' => $code,
-                'name' => $name,
-                'name_bn' => $bn,
-                'owner_name' => $owner,
-                'phone' => $phone,
-                'category' => $cat,
-                'lat' => $hasLoc ? $base[0] + (($i * 37) % 23 - 11) * 0.004 : null,
-                'lng' => $hasLoc ? $base[1] + (($i * 53) % 19 - 9) * 0.004 : null,
-                'location_accuracy_m' => $hasLoc ? 12 : null,
-                'due' => $due * 100,
-                'credit_limit' => $limit * 100,
-                'status' => $status,
-                'created_by' => $addedBy ? $this->staff[$addedBy]->id : null,
-                'last_order_at' => $lastDays !== null ? now()->subDays($lastDays) : null,
-            ]);
-        }
-
-        // Trips first (orders reference them).
-        $trips = [];
-
-        foreach ([
-            ['T-1108', 'DM01', 'Mirpur-10', 'Van DHK-ন-11-2233', 'in_progress', 48300],
-            ['T-1109', 'DM02', 'Uttara Sec-7', 'Van DHK-ন-12-4455', 'in_progress', 36750],
-            ['T-1110', 'DM03', 'Dhanmondi', 'Pickup DHK-ঠ-14-1010', 'in_progress', 19200],
-            ['T-1111', 'DM04', 'Badda', 'Van DHK-ন-15-7788', 'loaded', 0],
-            ['T-1112', 'DM01', 'Mirpur-2', 'Van DHK-ন-11-2233', 'planned', 0],
-            ['T-1104', 'DM02', 'Uttara Sec-11', 'Van DHK-ন-12-4455', 'closed', 52300],
-        ] as [$number, $dm, $route, $vehicle, $status, $cash]) {
-            $trips[$number] = Trip::create([
-                'number' => $number, 'delivery_user_id' => $this->staff[$dm]->id, 'route_id' => $this->routes[$route]->id,
-                'vehicle' => $vehicle, 'status' => $status, 'cash_collected' => $cash * 100,
-                'closed_at' => $status === 'closed' ? now()->subDay() : null,
-            ]);
-        }
-
-        $orders = [
+    /** @return list<array{string, int, string, string, int, string, list<string>, int, int, string|null}> number, minutes ago, shop, SR, item lines, status, flags, distance m, accuracy m, trip */
+    private static function orderData(): array
+    {
+        return [
             ['SR07-261110-019', 12, 's1', 'SR07', 5, 'pending', [], 14, 9, null],
             ['SR07-261110-018', 27, 's2', 'SR07', 3, 'pending', [], 22, 12, null],
             ['SR03-261110-017', 41, 's3', 'SR03', 9, 'pending', ['over_credit'], 31, 15, null],
@@ -317,17 +292,73 @@ class DemoSeeder extends Seeder
             ['SR12-261109-006', 1530, 's10', 'SR12', 3, 'failed', ['no_location'], 0, 0, 'T-1111'],
             ['SR15-261109-014', 1600, 's9', 'SR15', 2, 'cancelled', [], 33, 13, null],
         ];
+    }
+
+    /** @return list<array{string, string, string, int, int, string, string, string, string, int}> number, shop, type, item lines, value, reason, condition, by, status, minutes ago */
+    private static function returnData(): array
+    {
+        return [
+            ['RT-0418', 's3', 'at_delivery', 2, 1920, 'damaged', 'damaged', 'DM02', 'pending', 40],
+            ['RT-0417', 's4', 'market', 1, 680, 'expired', 'damaged', 'SR15', 'pending', 95],
+            ['RT-0416', 's6', 'at_delivery', 1, 408, 'wrong_item', 'good', 'DM01', 'pending', 150],
+            ['RT-0415', 's9', 'market', 3, 2340, 'not_needed', 'good', 'SR03', 'pending', 300],
+            ['RT-0412', 's1', 'market', 1, 1020, 'expired', 'damaged', 'SR07', 'approved', 1440],
+            ['RT-0410', 's2', 'at_delivery', 2, 760, 'damaged', 'damaged', 'DM01', 'approved', 1700],
+            ['RT-0407', 's10', 'market', 4, 3600, 'other', 'good', 'SR12', 'rejected', 2900],
+        ];
+    }
+
+    private function shopsAndSales(): void
+    {
+        // Around Mirpur, Dhaka — demo coordinates for the shop map.
+        $base = [23.8069, 90.3687];
+
+        foreach (self::shopData() as $i => [$key, $code, $name, $bn, $owner, $phone, $route, $cat, $due, $limit, $lastDays, $hasLoc, $status, $addedBy]) {
+            $this->shops[$key] = Shop::create([
+                'route_id' => $this->routes[$route]->id,
+                'code' => $code,
+                'name' => $name,
+                'name_bn' => $bn,
+                'owner_name' => $owner,
+                'phone' => $phone,
+                'category' => $cat,
+                'lat' => $hasLoc ? $base[0] + (($i * 37) % 23 - 11) * 0.004 : null,
+                'lng' => $hasLoc ? $base[1] + (($i * 53) % 19 - 9) * 0.004 : null,
+                'location_accuracy_m' => $hasLoc ? 12 : null,
+                'due' => $due * 100,
+                'credit_limit' => $limit * 100,
+                'status' => $status,
+                'created_by' => $addedBy ? $this->staff[$addedBy]->id : null,
+                'last_order_at' => $lastDays !== null ? now()->subDays($lastDays) : null,
+            ]);
+        }
+
+        // Trips first (orders reference them).
+        foreach ([
+            ['T-1108', 'DM01', 'Mirpur-10', 'Van DHK-ন-11-2233', 'in_progress', 48300],
+            ['T-1109', 'DM02', 'Uttara Sec-7', 'Van DHK-ন-12-4455', 'in_progress', 36750],
+            ['T-1110', 'DM03', 'Dhanmondi', 'Pickup DHK-ঠ-14-1010', 'in_progress', 19200],
+            ['T-1111', 'DM04', 'Badda', 'Van DHK-ন-15-7788', 'loaded', 0],
+            ['T-1112', 'DM01', 'Mirpur-2', 'Van DHK-ন-11-2233', 'planned', 0],
+            ['T-1104', 'DM02', 'Uttara Sec-11', 'Van DHK-ন-12-4455', 'closed', 52300],
+        ] as [$number, $dm, $route, $vehicle, $status, $cash]) {
+            $this->trips[$number] = Trip::create([
+                'number' => $number, 'delivery_user_id' => $this->staff[$dm]->id, 'route_id' => $this->routes[$route]->id,
+                'vehicle' => $vehicle, 'status' => $status, 'cash_collected' => $cash * 100,
+                'closed_at' => $status === 'closed' ? now()->subDay() : null,
+            ]);
+        }
 
         $actives = array_values(array_filter($this->products, fn (Product $p) => $p->active));
 
-        foreach ($orders as $n => [$number, $min, $shopKey, $sr, $items, $status, $flags, $dist, $acc, $trip]) {
+        foreach (self::orderData() as $n => [$number, $min, $shopKey, $sr, $items, $status, $flags, $dist, $acc, $trip]) {
             $shop = $this->shops[$shopKey];
             $at = now()->subMinutes($min);
             $order = Order::create([
                 'number' => $number,
                 'shop_id' => $shop->id,
                 'sales_user_id' => $this->staff[$sr]->id,
-                'trip_id' => $trip ? $trips[$trip]->id : null,
+                'trip_id' => $trip ? $this->trips[$trip]->id : null,
                 'status' => $status,
                 'ordered_at' => $at,
                 'note' => $n === 3 ? 'সকাল ১১টার আগে ডেলিভারি দিন — দুপুরে দোকান বন্ধ থাকে।' : null,
@@ -387,15 +418,7 @@ class DemoSeeder extends Seeder
             ]);
         }
 
-        foreach ([
-            ['RT-0418', 's3', 'at_delivery', 2, 1920, 'damaged', 'damaged', 'DM02', 'pending', 40],
-            ['RT-0417', 's4', 'market', 1, 680, 'expired', 'damaged', 'SR15', 'pending', 95],
-            ['RT-0416', 's6', 'at_delivery', 1, 408, 'wrong_item', 'good', 'DM01', 'pending', 150],
-            ['RT-0415', 's9', 'market', 3, 2340, 'not_needed', 'good', 'SR03', 'pending', 300],
-            ['RT-0412', 's1', 'market', 1, 1020, 'expired', 'damaged', 'SR07', 'approved', 1440],
-            ['RT-0410', 's2', 'at_delivery', 2, 760, 'damaged', 'damaged', 'DM01', 'approved', 1700],
-            ['RT-0407', 's10', 'market', 4, 3600, 'other', 'good', 'SR12', 'rejected', 2900],
-        ] as [$num, $shopKey, $type, $items, $value, $reason, $condition, $who, $status, $min]) {
+        foreach (self::returnData() as [$num, $shopKey, $type, $items, $value, $reason, $condition, $who, $status, $min]) {
             $return = ShopReturn::create([
                 'number' => $num, 'shop_id' => $this->shops[$shopKey]->id, 'user_id' => $this->staff[$who]->id, 'type' => $type,
                 'items_count' => $items, 'value' => $value * 100, 'reason' => $reason, 'condition' => $condition, 'status' => $status,

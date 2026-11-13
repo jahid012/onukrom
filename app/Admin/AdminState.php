@@ -60,6 +60,7 @@ class AdminState
         return $at ? (int) max(0, round((now()->getTimestamp() - $at->getTimestamp()) / 60)) : 0;
     }
 
+    /** @return array<string, mixed> */
     public function build(): array
     {
         $tenant = TenantContext::get();
@@ -179,7 +180,7 @@ class AdminState
                 'key' => $r->key,
                 'name' => $r->name,
                 'builtIn' => (bool) $r->built_in,
-                'grants' => array_values($r->permissions ?? []),
+                'grants' => $r->permissions,
                 'users' => $users->filter(fn (User $u) => $u->roles->contains('id', $r->id))->count(),
             ])->values(),
             'settings' => [
@@ -211,6 +212,10 @@ class AdminState
         return $userId ? ($this->codes[$userId] ?? '') : '';
     }
 
+    /**
+     * @param  SupportCollection<int, Shop>  $shops
+     * @return array<string, mixed>
+     */
     private function order(Order $o, SupportCollection $shops): array
     {
         $shop = $shops->firstWhere('id', $o->shop_id);
@@ -248,7 +253,11 @@ class AdminState
         ];
     }
 
-    private function trips(SupportCollection $orders): SupportCollection
+    /**
+     * @param  SupportCollection<int, Order>  $orders
+     * @return array<int, array<string, mixed>>
+     */
+    private function trips(SupportCollection $orders): array
     {
         return Trip::with('orders:id,trip_id,number,status,total')->orderByDesc('created_at')->limit(300)->get()->map(fn (Trip $t) => [
             'id' => $t->id,
@@ -263,10 +272,15 @@ class AdminState
             'cashCollected' => self::taka($t->cash_collected),
             'status' => $t->status,
             'orderNumbers' => $t->orders->pluck('number')->values(),
-        ])->values();
+        ])->values()->all();
     }
 
-    private function zones(SupportCollection $areas, SupportCollection $shops): SupportCollection
+    /**
+     * @param  SupportCollection<int, Area>  $areas
+     * @param  SupportCollection<int, Shop>  $shops
+     * @return array<int, array<string, mixed>>
+     */
+    private function zones(SupportCollection $areas, SupportCollection $shops): array
     {
         $shopCount = $shops->where('status', '!=', 'inactive')->countBy('route_id');
         $children = $areas->groupBy('parent_id');
@@ -287,10 +301,16 @@ class AdminState
                     'shops' => (int) ($shopCount[$r->id] ?? 0),
                 ])->values(),
             ])->values(),
-        ])->values();
+        ])->values()->all();
     }
 
-    /** Price lists + explicit prices + history. The default list is the product's own price. */
+    /**
+     * Price lists + explicit prices + history. The default list is the product's own price.
+     *
+     * @param  SupportCollection<int, Product>  $products
+     * @param  SupportCollection<int, Shop>  $shops
+     * @return array<string, mixed>
+     */
     private function pricing(SupportCollection $products, SupportCollection $shops): array
     {
         $lists = PriceList::with('items')->orderBy('created_at')->get();
@@ -348,10 +368,11 @@ class AdminState
         ];
     }
 
+    /** @return array<string, mixed> */
     private function staff(User $u): array
     {
         $device = $u->devices->sortByDesc(fn ($d) => $d->last_sync_at ?? $d->updated_at)->first();
-        $synced = $device?->last_sync_at ?? $u->last_seen_at;
+        $synced = $device->last_sync_at ?? $u->last_seen_at;
 
         return [
             'id' => $u->id,
@@ -367,7 +388,12 @@ class AdminState
         ];
     }
 
-    /** Outstanding dues grouped by how long since the shop last ordered. */
+    /**
+     * Outstanding dues grouped by how long since the shop last ordered.
+     *
+     * @param  SupportCollection<int, Shop>  $shops
+     * @return array<int, array{key: string, amount: float|int, shops: int}>
+     */
     private function aging(SupportCollection $shops): array
     {
         $buckets = ['0_30' => [0, 0], '31_60' => [0, 0], '60_plus' => [0, 0]];
@@ -382,7 +408,15 @@ class AdminState
         return collect($buckets)->map(fn ($b, $key) => ['key' => $key, 'amount' => self::taka($b[0]), 'shops' => $b[1]])->values()->all();
     }
 
-    /** Built from what needs attention right now; "read" is per admin user. */
+    /**
+     * Built from what needs attention right now; "read" is per admin user.
+     *
+     * @param  SupportCollection<int, Order>  $orders
+     * @param  SupportCollection<int, Shop>  $shops
+     * @param  SupportCollection<int, Product>  $products
+     * @param  SupportCollection<int, StockLevel>  $levels
+     * @return list<array<string, mixed>>
+     */
     private function notifications(SupportCollection $orders, SupportCollection $shops, SupportCollection $products, SupportCollection $levels, ?string $mainId): array
     {
         $readAt = $this->viewer->notifications_read_at;
@@ -403,12 +437,12 @@ class AdminState
             $push('orders-pending', 'order', ['n' => (string) $pending->count()], '/orders?tab=pending', $pending->max('ordered_at'));
         }
 
-        foreach ($pending->filter(fn (Order $o) => array_intersect($o->flags ?? [], ['mock', 'far_from_shop']))->take(3) as $o) {
+        foreach ($pending->filter(fn (Order $o) => array_intersect($o->flags ?? [], ['mock', 'far_from_shop']) !== [])->take(3) as $o) {
             $push('loc-'.$o->id, 'location', ['order' => $o->number], '/orders/'.$o->number, $o->ordered_at);
         }
 
         foreach (Deposit::where('status', 'waiting')->orderByDesc('created_at')->limit(3)->get() as $d) {
-            $name = User::find($d->user_id)?->name ?? '';
+            $name = User::find($d->user_id)->name ?? '';
             $push('dep-'.$d->id, 'deposit', ['name' => $name], '/collections?tab=deposits', $d->created_at);
         }
 
