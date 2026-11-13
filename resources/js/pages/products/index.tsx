@@ -311,7 +311,7 @@ function ProductDialog({
         name_bn: product?.name_bn ?? '',
         sku: product?.sku ?? '',
         brand: product?.brand ?? '',
-        category: product?.category ?? categories[0].key,
+        category: product?.category ?? categories[0]?.key ?? '',
         packSize: String(product?.packSize ?? 24),
         mrp: String(product?.mrp ?? ''),
         price: String(product?.price ?? ''),

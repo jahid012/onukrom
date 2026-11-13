@@ -19,6 +19,7 @@ use App\Models\StockMovement;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Support\Tenancy\CompanySetup;
 use App\Support\Tenancy\TenantContext;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
@@ -64,6 +65,8 @@ class AdminState
     public function build(): array
     {
         $tenant = TenantContext::get();
+        // Repair a company created without its warehouses / categories.
+        CompanySetup::ensureDefaults();
         $users = User::with('roles', 'routes', 'devices')->orderBy('id')->get();
         $this->codes = $users->mapWithKeys(fn (User $u) => [$u->id => $u->employee_code ?? 'U'.$u->id])->all();
         $areas = Area::orderBy('sort')->get();

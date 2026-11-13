@@ -28,7 +28,7 @@ const rows: Row[] = [
 
 export function ShopHealth(p: Props) {
     const { t, f } = useFormat();
-    const activeShare = (p.active30d / p.total) * 100;
+    const activeShare = p.total > 0 ? (p.active30d / p.total) * 100 : 0;
 
     return (
         <Panel>

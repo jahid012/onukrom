@@ -618,6 +618,24 @@ export function addArea(zoneId: string, name: string) {
     void send('addArea', zoneId, name);
 }
 
+/** New zone with its first area (a new company has no zones yet). */
+export function addAreaInNewZone(zoneName: string, areaName: string) {
+    set((s) => ({
+        ...s,
+        zones: [
+            ...s.zones,
+            {
+                id: nextId('z'),
+                name: zoneName,
+                areas: [{ id: nextId('a'), name: areaName, routes: [] }],
+            },
+        ],
+    }));
+    void send<string>('addZone', zoneName).then((zoneId) =>
+        zoneId ? send('addArea', zoneId, areaName) : null,
+    );
+}
+
 export type RouteInput = {
     name: string;
     code: string;

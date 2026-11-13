@@ -2,24 +2,34 @@ import { Head } from '@inertiajs/react';
 import {
     BarChart3,
     Download,
+    FileDown,
     HandCoins,
     MapPinned,
     Package,
     Truck,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { Person } from '@/components/admin/bits';
 import { PageBody, PageHeader } from '@/components/admin/page-header';
-import { Meter, Panel, PanelHeader } from '@/components/dashboard/primitives';
+import { Panel, PanelHeader } from '@/components/dashboard/primitives';
+import { SalesTrendChart } from '@/components/dashboard/sales-trend-chart';
+import { TopProducts } from '@/components/dashboard/top-products';
+import { DuesAgingChart } from '@/components/reports/dues-aging-chart';
+import { SharePie } from '@/components/reports/share-pie';
+import type { PieSlice } from '@/components/reports/share-pie';
 import { Button } from '@/components/ui/button';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { linesForOrder, useAdminData } from '@/data/admin/store';
 import type { AdminData } from '@/data/admin/store';
 import { staffByCode } from '@/data/admin/store';
+import { periods } from '@/data/dashboard';
+import type { Period } from '@/data/dashboard';
 import { useAdmin } from '@/hooks/use-admin';
 import { downloadCsv } from '@/lib/csv';
 import { locationFlags } from '@/lib/order-status';
-import { cn } from '@/lib/utils';
+import { printReport } from '@/lib/print-report';
 import { index as reportsIndex } from '@/routes/reports';
 
 type ReportKey =
@@ -53,20 +63,21 @@ const groups: { key: string; icon: LucideIcon; reports: ReportKey[] }[] = [
     { key: 'stock', icon: Package, reports: ['stockLevels', 'returns'] },
 ];
 
-const targets: Record<string, number> = {
-    SR07: 15_00_000,
-    SR03: 12_00_000,
-    SR15: 11_00_000,
-    SR09: 9_00_000,
-    SR12: 8_00_000,
-};
-const monthSales: Record<string, number> = {
-    SR07: 13_84_200,
-    SR03: 12_10_900,
-    SR15: 8_62_300,
-    SR09: 6_41_800,
-    SR12: 2_95_400,
-};
+/** Order value per group, from live (not rejected/cancelled) orders. */
+function salesBy(
+    s: AdminData,
+    keyOf: (o: AdminData['orders'][number]) => string,
+): [string, number][] {
+    const map = new Map<string, number>();
+    s.orders
+        .filter((o) => !['rejected', 'cancelled'].includes(o.status))
+        .forEach((o) => {
+            const k = keyOf(o);
+            map.set(k, (map.get(k) ?? 0) + o.total);
+        });
+
+    return [...map.entries()];
+}
 
 /** Build the rows for one report from the current data. */
 function buildReport(
@@ -297,155 +308,287 @@ function buildReport(
     }
 }
 
+/** CSV columns that hold taka amounts (formatted as money in the PDF). */
+const moneyColumns = new Set([
+    'value',
+    'amount',
+    'due',
+    'credit_limit',
+    'cash_expected',
+    'cash_collected',
+]);
+
 export default function ReportsIndex() {
     const { t, f, name } = useAdmin();
     const state = useAdminData();
+    const [period, setPeriod] = useState<Period>('30d');
     const shopName = (id: string) => {
         const shop = state.shops.find((x) => x.id === id);
 
         return shop ? name(shop) : id;
     };
+    const routeOf = (shopId: string) =>
+        state.shops.find((x) => x.id === shopId)?.route ?? '';
+    const bySr: PieSlice[] = salesBy(state, (o) => o.sr).map(
+        ([code, value]) => ({
+            key: code,
+            label: staffByCode(code).name,
+            value,
+        }),
+    );
+    const byRoute: PieSlice[] = salesBy(state, (o) => routeOf(o.shopId)).map(
+        ([route, value]) => ({
+            key: route || '-',
+            label: route || t('reports.charts.noRoute'),
+            value,
+        }),
+    );
+    const byMethod: PieSlice[] = (
+        state.dashboard?.collectionsByMethod ?? []
+    ).map((m) => ({
+        key: m.key,
+        label: t(`dashboard.collections.methods.${m.key}`),
+        value: m.amount,
+    }));
+    const trend = state.dashboard?.trends[period] ?? [];
+    const topProducts = state.dashboard?.topProducts ?? [];
+    const salesReps = state.dashboard?.salesReps ?? [];
+    const printedAt = t('reports.printedAt', {
+        date: f.date(new Date(), {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+        }),
+    });
 
-    const download = (key: ReportKey) => {
-        const { header, rows } = buildReport(key, state, shopName);
+    const report = (key: ReportKey) => {
+        const built = buildReport(key, state, shopName);
 
-        if (rows.length === 0) {
+        if (built.rows.length === 0) {
             toast(t('reports.empty'));
 
+            return null;
+        }
+
+        return built;
+    };
+
+    const download = (key: ReportKey) => {
+        const built = report(key);
+
+        if (!built) {
             return;
         }
 
-        downloadCsv(`report-${key}`, header, rows);
+        downloadCsv(`report-${key}`, built.header, built.rows);
         toast.success(
             t('reports.downloaded', {
                 name: t(`reports.items.${key}.title`),
-                n: f.num(rows.length),
+                n: f.num(built.rows.length),
             }),
         );
     };
 
+    const pdf = (key: ReportKey) => {
+        const built = report(key);
+
+        if (!built) {
+            return;
+        }
+
+        const numeric = built.header
+            .map((_, i) => (typeof built.rows[0][i] === 'number' ? i : -1))
+            .filter((i) => i >= 0);
+        const opened = printReport({
+            title: t(`reports.items.${key}.title`),
+            company: state.company.name,
+            meta: printedAt,
+            header: built.header,
+            rows: built.rows,
+            numeric,
+            format: (v, i) =>
+                typeof v !== 'number'
+                    ? v
+                    : moneyColumns.has(built.header[i])
+                      ? f.taka(v)
+                      : f.num(v),
+        });
+
+        if (!opened) {
+            toast.error(t('reports.popupBlocked'));
+        }
+    };
+
+    const empty = (text: string) => (
+        <p className="px-4 py-12 text-center text-sm text-muted-foreground">
+            {text}
+        </p>
+    );
+
     return (
         <>
             <Head title={t('reports.title')} />
-            <PageBody>
+            <PageBody className="print-area print-landscape">
                 <PageHeader
                     title={t('reports.title')}
                     description={t('reports.description')}
+                    actions={
+                        <div className="flex flex-wrap items-center gap-2 print:hidden">
+                            <ToggleGroup
+                                type="single"
+                                variant="outline"
+                                size="sm"
+                                value={period}
+                                onValueChange={(v) =>
+                                    v && setPeriod(v as Period)
+                                }
+                                aria-label={t('dashboard.periodLabel')}
+                                className="bg-card"
+                            >
+                                {periods.map((p) => (
+                                    <ToggleGroupItem
+                                        key={p}
+                                        value={p}
+                                        className="px-3"
+                                    >
+                                        {t(`period.${p}`)}
+                                    </ToggleGroupItem>
+                                ))}
+                            </ToggleGroup>
+                            <Button size="sm" onClick={() => window.print()}>
+                                <FileDown className="size-3.5" />
+                                {t('reports.pdf')}
+                            </Button>
+                        </div>
+                    }
                 />
 
-                <Panel>
-                    <PanelHeader
-                        title={t('reports.perfTitle')}
-                        subtitle={t('reports.perfSubtitle')}
-                        action={
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="bg-card"
-                                onClick={() => download('visits')}
-                            >
-                                <Download className="size-3.5" />
-                                {t('reports.download')}
-                            </Button>
-                        }
+                {/* Print-only line under the title: which company, when. */}
+                <p className="hidden text-sm text-muted-foreground print:block">
+                    {state.company.name} · {printedAt}
+                </p>
+
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 print:grid-cols-3">
+                    {trend.length > 0 ? (
+                        <SalesTrendChart data={trend} period={period} />
+                    ) : (
+                        <Panel className="lg:col-span-2">
+                            <PanelHeader title={t('dashboard.trend.title')} />
+                            {empty(t('reports.charts.empty'))}
+                        </Panel>
+                    )}
+                    <DuesAgingChart aging={state.aging} />
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 print:grid-cols-3">
+                    <SharePie
+                        title={t('reports.charts.bySr.title')}
+                        subtitle={t('reports.charts.bySr.subtitle')}
+                        slices={bySr}
                     />
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[760px] text-sm">
-                            <thead className="border-b bg-background text-xs text-muted-foreground">
-                                <tr>
-                                    <th className="px-4 py-2 text-left font-medium">
-                                        {t('reports.cols.sr')}
-                                    </th>
-                                    <th className="w-72 px-4 py-2 text-left font-medium">
-                                        {t('reports.cols.target')}
-                                    </th>
-                                    <th className="px-4 py-2 text-right font-medium">
-                                        {t('reports.cols.sales')}
-                                    </th>
-                                    <th className="px-4 py-2 text-right font-medium">
-                                        {t('reports.cols.visits')}
-                                    </th>
-                                    <th className="px-4 py-2 text-right font-medium">
-                                        {t('reports.cols.strike')}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y">
-                                {(state.dashboard?.salesReps ?? []).map((r) => {
-                                    const sales = monthSales[r.code] ?? r.sales;
-                                    const target = targets[r.code] ?? sales;
-                                    const pct = (sales / target) * 100;
+                    <SharePie
+                        title={t('reports.charts.byRoute.title')}
+                        subtitle={t('reports.charts.byRoute.subtitle')}
+                        slices={byRoute}
+                    />
+                    <SharePie
+                        title={t('reports.charts.byMethod.title')}
+                        subtitle={t('reports.charts.byMethod.subtitle')}
+                        slices={byMethod}
+                        keepOrder
+                    />
+                </div>
 
-                                    return (
-                                        <tr
-                                            key={r.code}
-                                            className="hover:bg-muted/60"
-                                        >
-                                            <td className="px-4 py-2.5">
-                                                <Person
-                                                    name={r.name}
-                                                    sub={`${r.code} · ${r.route}`}
-                                                    size="sm"
-                                                />
-                                            </td>
-                                            <td className="px-4 py-2.5">
-                                                <div className="flex items-center gap-2">
-                                                    <Meter
-                                                        value={sales}
-                                                        max={target}
-                                                        tone={
-                                                            pct >= 90
-                                                                ? 'primary'
-                                                                : pct >= 60
-                                                                  ? 'warning'
-                                                                  : 'danger'
-                                                        }
-                                                        label={t(
-                                                            'reports.cols.target',
-                                                        )}
-                                                    />
-                                                    <span
-                                                        className={cn(
-                                                            'w-12 shrink-0 text-right text-xs font-medium tabular-nums',
-                                                            pct < 60 &&
-                                                                'text-danger-ink',
-                                                        )}
-                                                    >
-                                                        {f.percent(pct)}
-                                                    </span>
-                                                </div>
-                                                <p className="mt-1 text-[11px] text-muted-foreground tabular-nums">
-                                                    {t('reports.ofTarget', {
-                                                        target: f.taka(target),
-                                                    })}
-                                                </p>
-                                            </td>
-                                            <td className="px-4 py-2.5 text-right font-medium tabular-nums">
-                                                {f.taka(sales)}
-                                            </td>
-                                            <td className="px-4 py-2.5 text-right tabular-nums">
-                                                {f.num(r.visited)}/
-                                                {f.num(r.planned)}
-                                            </td>
-                                            <td className="px-4 py-2.5 text-right tabular-nums">
-                                                {f.percent(
-                                                    (r.orders /
-                                                        Math.max(
-                                                            1,
-                                                            r.visited,
-                                                        )) *
-                                                        100,
-                                                )}
-                                            </td>
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 print:grid-cols-3">
+                    <Panel className="lg:col-span-2 print:col-span-2">
+                        <PanelHeader
+                            title={t('reports.perfTitle')}
+                            subtitle={t('reports.perfSubtitle')}
+                            action={
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="bg-card print:hidden"
+                                    onClick={() => download('visits')}
+                                >
+                                    <Download className="size-3.5" />
+                                    {t('reports.download')}
+                                </Button>
+                            }
+                        />
+                        {salesReps.length === 0 ? (
+                            empty(t('reports.charts.noReps'))
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full min-w-[560px] text-sm">
+                                    <thead className="border-b bg-background text-xs text-muted-foreground">
+                                        <tr>
+                                            <th className="px-4 py-2 text-left font-medium">
+                                                {t('reports.cols.sr')}
+                                            </th>
+                                            <th className="px-4 py-2 text-right font-medium">
+                                                {t('reports.cols.sales')}
+                                            </th>
+                                            <th className="px-4 py-2 text-right font-medium">
+                                                {t('reports.cols.visits')}
+                                            </th>
+                                            <th className="px-4 py-2 text-right font-medium">
+                                                {t('reports.cols.strike')}
+                                            </th>
                                         </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </Panel>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {salesReps.map((r) => (
+                                            <tr
+                                                key={r.code}
+                                                className="hover:bg-muted/60"
+                                            >
+                                                <td className="px-4 py-2.5">
+                                                    <Person
+                                                        name={r.name}
+                                                        sub={`${r.code} · ${r.route}`}
+                                                        size="sm"
+                                                    />
+                                                </td>
+                                                <td className="px-4 py-2.5 text-right font-medium tabular-nums">
+                                                    {f.taka(r.sales)}
+                                                </td>
+                                                <td className="px-4 py-2.5 text-right tabular-nums">
+                                                    {f.num(r.visited)}/
+                                                    {f.num(r.planned)}
+                                                </td>
+                                                <td className="px-4 py-2.5 text-right tabular-nums">
+                                                    {f.percent(
+                                                        (r.orders /
+                                                            Math.max(
+                                                                1,
+                                                                r.visited,
+                                                            )) *
+                                                            100,
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </Panel>
+                    {topProducts.length > 0 ? (
+                        <TopProducts products={topProducts} />
+                    ) : (
+                        <Panel>
+                            <PanelHeader
+                                title={t('dashboard.products.title')}
+                            />
+                            {empty(t('reports.charts.empty'))}
+                        </Panel>
+                    )}
+                </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 print:hidden">
                     {groups.map((g) => (
                         <Panel key={g.key}>
                             <PanelHeader
@@ -471,15 +614,28 @@ export default function ReportsIndex() {
                                                 {t(`reports.items.${r}.text`)}
                                             </p>
                                         </div>
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="shrink-0 bg-card"
-                                            onClick={() => download(r)}
-                                        >
-                                            <Download className="size-3.5" />
-                                            CSV
-                                        </Button>
+                                        <div className="flex shrink-0 gap-1.5">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="bg-card"
+                                                onClick={() => pdf(r)}
+                                                aria-label={`${t(`reports.items.${r}.title`)} PDF`}
+                                            >
+                                                <FileDown className="size-3.5" />
+                                                PDF
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="bg-card"
+                                                onClick={() => download(r)}
+                                                aria-label={`${t(`reports.items.${r}.title`)} CSV`}
+                                            >
+                                                <Download className="size-3.5" />
+                                                CSV
+                                            </Button>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>

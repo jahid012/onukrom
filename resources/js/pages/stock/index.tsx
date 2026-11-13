@@ -39,13 +39,15 @@ export default function StockIndex() {
     const [adjusting, setAdjusting] = useState<Product | 'any' | null>(null);
     const [transferOpen, setTransferOpen] = useState(false);
     const wh = warehouses.find((w) => w.id === warehouseId) ?? warehouses[0];
+    // A new company has no products yet: nothing to adjust or transfer.
+    const canMove = products.length > 0 && wh !== undefined;
     const level = (p: Product) =>
-        stock[wh.id]?.[p.id] ?? { onHand: 0, reserved: 0 };
+        (wh && stock[wh.id]?.[p.id]) || { onHand: 0, reserved: 0 };
     const available = (p: Product) => level(p).onHand - level(p).reserved;
     const status = (p: Product): Level =>
         level(p).onHand <= 0
             ? 'out'
-            : wh.type === 'main' && available(p) < p.reorderAt
+            : wh?.type === 'main' && available(p) < p.reorderAt
               ? 'low'
               : 'ok';
     const rows = products.filter((p) => p.active || level(p).onHand > 0);
@@ -101,7 +103,7 @@ export default function StockIndex() {
                         >
                             {qty(Math.max(0, available(p)), p.packSize)}
                         </span>
-                        {wh.type === 'main' && (
+                        {wh?.type === 'main' && (
                             <Meter
                                 value={Math.max(0, available(p))}
                                 max={p.reorderAt * 3}
@@ -179,6 +181,7 @@ export default function StockIndex() {
                                 variant="outline"
                                 size="sm"
                                 className="bg-card"
+                                disabled={!canMove || warehouses.length < 2}
                                 onClick={() => setTransferOpen(true)}
                             >
                                 <ArrowLeftRight className="size-3.5" />
@@ -186,6 +189,12 @@ export default function StockIndex() {
                             </Button>
                             <Button
                                 size="sm"
+                                disabled={!canMove}
+                                title={
+                                    products.length === 0
+                                        ? t('stock.needProduct')
+                                        : undefined
+                                }
                                 onClick={() => setAdjusting('any')}
                             >
                                 <SlidersHorizontal className="size-3.5" />
@@ -200,7 +209,7 @@ export default function StockIndex() {
                         icon={Boxes}
                         label={t('stock.stats.value')}
                         value={f.taka(value)}
-                        note={name(wh)}
+                        note={wh ? name(wh) : ''}
                     />
                     <MiniStat
                         icon={TriangleAlert}
@@ -247,11 +256,14 @@ export default function StockIndex() {
                         />
                         <ul className="divide-y">
                             {movements.slice(0, 10).map((m) => {
-                                const p =
-                                    products.find(
-                                        (x) => x.id === m.productId,
-                                    ) ?? products[0];
+                                const p = products.find(
+                                    (x) => x.id === m.productId,
+                                );
                                 const Icon = moveIcon[m.type];
+
+                                if (!p) {
+                                    return null;
+                                }
 
                                 return (
                                     <li

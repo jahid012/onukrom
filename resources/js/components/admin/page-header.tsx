@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
 /** Page title row: title + description on the left, actions on the right. */
 export function PageHeader({
@@ -32,8 +33,16 @@ export function PageHeader({
 }
 
 /** Standard page body spacing used by every admin page. */
-export function PageBody({ children }: { children: ReactNode }) {
+export function PageBody({
+    children,
+    className,
+}: {
+    children: ReactNode;
+    className?: string;
+}) {
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">{children}</div>
+        <div className={cn('flex flex-1 flex-col gap-4 p-4 md:p-6', className)}>
+            {children}
+        </div>
     );
 }

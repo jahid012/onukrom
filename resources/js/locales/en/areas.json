@@ -34,5 +34,9 @@
         "routeAdded": "Route {{route}} added",
         "routeSaved": "Route {{route}} saved",
         "deleted": "Route {{route}} deleted"
-    }
+    },
+    "empty": "No zones yet. Add your first area — you can create its zone at the same time.",
+    "needArea": "Add an area first",
+    "newZone": "+ New zone",
+    "zoneName": "Zone name"
 }

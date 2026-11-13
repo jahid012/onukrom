@@ -249,4 +249,19 @@
     .no-print {
         display: none !important;
     }
+
+    /* Reports: wide grids of charts fit a landscape page; a panel is never cut. */
+    .print-landscape {
+        page: landscape;
+        padding: 0;
+    }
+
+    .print-area section {
+        break-inside: avoid;
+    }
+}
+
+@page landscape {
+    size: A4 landscape;
+    margin: 10mm;
 }

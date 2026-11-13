@@ -58,5 +58,6 @@
     "toast": {
         "adjusted": "{{product}}: {{qty}}",
         "transferred": "{{product}}-এর {{qty}} স্থানান্তর হয়েছে"
-    }
+    },
+    "needProduct": "আগে একটি পণ্য যোগ করুন"
 }

@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Support\Tenancy\CompanySetup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -65,5 +67,38 @@ class CreateCompanyTest extends TestCase
         $this->withHeader('X-Deploy-Token', 'secret-token')
             ->postJson('/api/_deploy/create-company', $payload)
             ->assertUnprocessable();
+    }
+
+    public function test_a_company_missing_its_warehouses_and_categories_is_repaired_when_the_panel_loads(): void
+    {
+        $this->artisan('onukrom:create-company', ['code' => 'acme', 'name' => 'Acme', '--owner' => 'A', '--email' => 'a@acme.test'])->assertSuccessful();
+        $tenant = Tenant::where('code', 'acme')->firstOrFail();
+        Warehouse::withoutGlobalScopes()->where('tenant_id', $tenant->id)->delete();
+        Category::withoutGlobalScopes()->where('tenant_id', $tenant->id)->forceDelete();
+
+        $state = $this->actingAs(User::where('email', 'a@acme.test')->firstOrFail())
+            ->getJson('/admin/state')->assertOk()->json('state');
+
+        $this->assertEqualsCanonicalizing(['main', 'damage'], array_column($state['warehouses'], 'type'));
+        $this->assertCount(count(CompanySetup::DEFAULT_CATEGORIES), $state['categories']);
+
+        // Loading again adds nothing more.
+        $this->getJson('/admin/state')->assertOk();
+        $this->assertSame(2, Warehouse::withoutGlobalScopes()->where('tenant_id', $tenant->id)->count());
+    }
+
+    public function test_a_new_company_can_build_its_first_zone_area_and_route(): void
+    {
+        $this->artisan('onukrom:create-company', ['code' => 'acme', 'name' => 'Acme', '--owner' => 'A', '--email' => 'a@acme.test'])->assertSuccessful();
+        $this->actingAs(User::where('email', 'a@acme.test')->firstOrFail());
+        $act = fn (string $action, array $args) => $this->postJson('/admin/actions/'.$action, ['args' => $args]);
+
+        $zoneId = $act('addZone', ['Dhaka North'])->assertOk()->json('result');
+        $act('addZone', ['Dhaka North'])->assertUnprocessable();
+        $areaId = $act('addArea', [$zoneId, 'Mirpur'])->assertOk()->json('result');
+        $act('saveRoute', [$areaId, null, ['name' => 'Mirpur-10', 'code' => 'MR-10', 'visitDays' => ['sat']]])
+            ->assertOk()
+            ->assertJsonPath('state.zones.0.name', 'Dhaka North')
+            ->assertJsonPath('state.zones.0.areas.0.routes.0.name', 'Mirpur-10');
     }
 }

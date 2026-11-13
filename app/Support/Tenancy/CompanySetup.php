@@ -2,6 +2,7 @@
 
 namespace App\Support\Tenancy;
 
+use App\Models\Category;
 use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
@@ -13,12 +14,47 @@ use Illuminate\Support\Str;
 
 /**
  * Creates a ready-to-use company: built-in roles, main and damage warehouses,
- * and an owner who can sign in to the admin panel. Used by
+ * starter product categories, and an owner who can sign in to the admin panel. Used by
  * `php artisan onukrom:create-company` and the deploy hook of the same name
  * (production has no SSH).
  */
 class CompanySetup
 {
+    /** Starter product categories: key => [English, Bangla]. Renamed or extended later. */
+    public const DEFAULT_CATEGORIES = [
+        'drinks' => ['Drinks', 'পানীয়'],
+        'food' => ['Food & snacks', 'খাবার ও স্ন্যাকস'],
+        'personal_care' => ['Personal care', 'ব্যক্তিগত যত্ন'],
+        'household' => ['Household', 'গৃহস্থালি'],
+        'other' => ['Other', 'অন্যান্য'],
+    ];
+
+    /**
+     * What every company needs before the admin panel works: a main and a
+     * damage warehouse (orders reserve stock in the main one) and at least
+     * one product category. Idempotent; runs for the current tenant. Also
+     * called when the admin panel loads, so a company created without them
+     * is repaired instead of crashing pages.
+     */
+    public static function ensureDefaults(): void
+    {
+        if (! Warehouse::where('type', 'main')->exists()) {
+            Warehouse::create(['name' => 'Main warehouse', 'name_bn' => 'প্রধান গুদাম', 'type' => 'main']);
+        }
+
+        if (! Warehouse::where('type', 'damage')->exists()) {
+            Warehouse::create(['name' => 'Damage store', 'name_bn' => 'ড্যামেজ স্টোর', 'type' => 'damage']);
+        }
+
+        if (! Category::exists()) {
+            $sort = 0;
+
+            foreach (self::DEFAULT_CATEGORIES as $key => [$name, $bn]) {
+                Category::create(['key' => $key, 'name' => $name, 'name_bn' => $bn, 'sort' => $sort++]);
+            }
+        }
+    }
+
     /**
      * @param  array{code: string, name: string, phone?: ?string, address?: ?string}  $company
      * @param  array{name: string, email: string, phone?: ?string, password?: ?string}  $owner
@@ -42,8 +78,7 @@ class CompanySetup
                     Role::create(['key' => $key, 'built_in' => true, 'permissions' => $permissions]);
                 }
 
-                Warehouse::create(['name' => 'Main warehouse', 'name_bn' => 'প্রধান গুদাম', 'type' => 'main']);
-                Warehouse::create(['name' => 'Damage store', 'name_bn' => 'ড্যামেজ স্টোর', 'type' => 'damage']);
+                self::ensureDefaults();
 
                 $user = User::create([
                     'name' => $owner['name'],

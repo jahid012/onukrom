@@ -15,7 +15,8 @@ export function CollectionsBreakdown({
 }) {
     const { t, f } = useFormat();
     const total = methods.reduce((s, m) => s + m.amount, 0);
-    const share = (m: CollectionMethod) => (m.amount / total) * 100;
+    const share = (m: CollectionMethod) =>
+        total > 0 ? (m.amount / total) * 100 : 0;
     const label = (m: CollectionMethod) =>
         t(`dashboard.collections.methods.${m.key}`);
 

@@ -125,7 +125,7 @@ function SalesRepTable({ rows }: { rows: SalesRep[] }) {
             </thead>
             <tbody className="divide-y">
                 {rows.map((r) => {
-                    const coverage = r.visited / r.planned;
+                    const coverage = r.planned > 0 ? r.visited / r.planned : 0;
 
                     return (
                         <tr key={r.code} className="hover:bg-muted/60">

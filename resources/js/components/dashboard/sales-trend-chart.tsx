@@ -40,7 +40,8 @@ export function SalesTrendChart({
         ordered: data.reduce((s, p) => s + p.ordered, 0),
         delivered: data.reduce((s, p) => s + p.delivered, 0),
     };
-    const deliveryRate = (totals.delivered / totals.ordered) * 100;
+    const deliveryRate =
+        totals.ordered > 0 ? (totals.delivered / totals.ordered) * 100 : 0;
     const lastIndex = data.length - 1;
 
     return (

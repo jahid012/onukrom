@@ -58,5 +58,6 @@
     "toast": {
         "adjusted": "{{product}}: {{qty}}",
         "transferred": "{{qty}} of {{product}} transferred"
-    }
+    },
+    "needProduct": "Add a product first"
 }

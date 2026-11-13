@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import type { Day, Route } from '@/data/admin/customers';
 import {
     addArea,
+    addAreaInNewZone,
     allRoutesOf,
     deleteRoute,
     saveRoute,
@@ -35,6 +36,9 @@ import { index as areasIndex } from '@/routes/areas';
 import { index as shopsIndex } from '@/routes/shops';
 
 const week: Day[] = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
+
+/** Select value for "create a new zone" in the add-area dialog. */
+const NEW_ZONE = '__new';
 
 export default function AreasIndex() {
     const { t, f, name } = useAdmin();
@@ -52,6 +56,7 @@ export default function AreasIndex() {
     } | null>(null);
     const [deleting, setDeleting] = useState<Route | null>(null);
     const route = routes.find((r) => r.id === routeId) ?? routes[0];
+    const firstArea = zones.flatMap((z) => z.areas)[0];
     const areaOf = (id: string) =>
         zones
             .flatMap((z) => z.areas)
@@ -96,10 +101,17 @@ export default function AreasIndex() {
                             </Button>
                             <Button
                                 size="sm"
+                                disabled={firstArea === undefined}
+                                title={
+                                    firstArea === undefined
+                                        ? t('areas.needArea')
+                                        : undefined
+                                }
                                 onClick={() =>
+                                    firstArea &&
                                     setRouteDialog({
                                         route: null,
-                                        areaId: zones[0].areas[0].id,
+                                        areaId: firstArea.id,
                                     })
                                 }
                             >
@@ -117,6 +129,20 @@ export default function AreasIndex() {
                             subtitle={t('areas.treeSubtitle')}
                         />
                         <div className="flex flex-col py-2">
+                            {zones.length === 0 && (
+                                <div className="flex flex-col items-center gap-3 px-4 py-8 text-center">
+                                    <p className="text-sm text-muted-foreground">
+                                        {t('areas.empty')}
+                                    </p>
+                                    <Button
+                                        size="sm"
+                                        onClick={() => setAreaDialog(true)}
+                                    >
+                                        <Plus className="size-3.5" />
+                                        {t('areas.addArea')}
+                                    </Button>
+                                </div>
+                            )}
                             {zones.map((zone) => (
                                 <div key={zone.id}>
                                     <p className="px-4 pt-2 pb-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
@@ -460,8 +486,11 @@ function Assignee({
 function AreaDialog({ onClose }: { onClose: () => void }) {
     const { t } = useAdmin();
     const { zones } = useAdminData();
-    const [zone, setZone] = useState(zones[0].id);
+    // A company starts with no zones: then the area's zone is made here too.
+    const [zone, setZone] = useState(zones[0]?.id ?? NEW_ZONE);
+    const [zoneName, setZoneName] = useState('');
     const [name, setName] = useState('');
+    const isNew = zone === NEW_ZONE;
 
     return (
         <FormDialog
@@ -469,9 +498,14 @@ function AreaDialog({ onClose }: { onClose: () => void }) {
             onOpenChange={(o) => !o && onClose()}
             title={t('areas.addArea')}
             submitLabel={t('areas.addArea')}
-            disabled={name.trim() === ''}
+            disabled={name.trim() === '' || (isNew && zoneName.trim() === '')}
             onSubmit={() => {
-                addArea(zone, name.trim());
+                if (isNew) {
+                    addAreaInNewZone(zoneName.trim(), name.trim());
+                } else {
+                    addArea(zone, name.trim());
+                }
+
                 toast.success(
                     t('areas.toast.areaAdded', { area: name.trim() }),
                 );
@@ -483,15 +517,28 @@ function AreaDialog({ onClose }: { onClose: () => void }) {
                     value={zone}
                     onChange={setZone}
                     label={t('areas.zone')}
-                    options={zones.map((z) => ({ value: z.id, label: z.name }))}
+                    options={[
+                        ...zones.map((z) => ({ value: z.id, label: z.name })),
+                        { value: NEW_ZONE, label: t('areas.newZone') },
+                    ]}
                 />
             </Field>
+            {isNew && (
+                <Field label={t('areas.zoneName')}>
+                    <TextInput
+                        value={zoneName}
+                        onChange={setZoneName}
+                        placeholder="Dhaka North"
+                        autoFocus
+                    />
+                </Field>
+            )}
             <Field label={t('areas.areaName')}>
                 <TextInput
                     value={name}
                     onChange={setName}
                     placeholder="Savar"
-                    autoFocus
+                    autoFocus={!isNew}
                 />
             </Field>
         </FormDialog>

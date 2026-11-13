@@ -326,6 +326,19 @@ class AdminActions
         Shop::whereIn('id', $ids)->get()->each->update(['route_id' => $routeId]);
     }
 
+    /** Top level of the territory tree; a new company starts with none. */
+    protected function addZone(string $name): string
+    {
+        $this->can('area.manage');
+        $name = trim($name);
+
+        if ($name === '' || Area::where('type', 'zone')->where('name', $name)->exists()) {
+            throw new AdminError('Zone name is empty or already used.', 422);
+        }
+
+        return Area::create(['type' => 'zone', 'name' => $name, 'sort' => Area::max('sort') + 1])->id;
+    }
+
     protected function addArea(string $zoneId, string $name): string
     {
         $this->can('area.manage');

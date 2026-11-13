@@ -2,11 +2,9 @@
     "title": "Reports",
     "description": "Sales, field work, deliveries, money and stock — export to Excel or PDF",
     "perfTitle": "Sales rep performance",
-    "perfSubtitle": "Target vs achieved this month",
-    "ofTarget": "target {{target}}",
+    "perfSubtitle": "Today's sales, visits and strike rate",
     "cols": {
         "sr": "Sales rep",
-        "target": "Target achieved",
         "sales": "Sales",
         "visits": "Visits",
         "strike": "Strike rate"
@@ -74,5 +72,29 @@
     },
     "download": "Download CSV",
     "downloaded": "{{name}} downloaded ({{n}} rows)",
-    "empty": "Nothing to export yet"
+    "empty": "Nothing to export yet",
+    "charts": {
+        "bySr": {
+            "title": "Sales by sales rep",
+            "subtitle": "Order value, last 90 days"
+        },
+        "byRoute": {
+            "title": "Sales by route",
+            "subtitle": "Order value, last 90 days"
+        },
+        "byMethod": {
+            "title": "Collections by method",
+            "subtitle": "Last 30 days"
+        },
+        "other": "Other",
+        "noRoute": "No route",
+        "total": "Total",
+        "empty": "No data yet",
+        "agingSubtitle": "{{total}} outstanding, by days since the last order",
+        "noDues": "No outstanding dues",
+        "noReps": "No sales reps yet"
+    },
+    "pdf": "Download PDF",
+    "printedAt": "Printed {{date}}",
+    "popupBlocked": "Allow pop-ups for this site to print the PDF"
 }
