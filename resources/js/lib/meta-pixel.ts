@@ -9,6 +9,7 @@ type Fbq = ((...args: unknown[]) => void) & {
     push: Fbq;
     loaded: boolean;
     version: string;
+    disablePushState?: boolean;
 };
 
 declare global {
@@ -51,6 +52,10 @@ export function initPixel(pixelId: string | null | undefined): boolean {
         document.head.appendChild(script);
     }
 
+    // The Pixel otherwise fires its own PageView (no event id) on every
+    // history change; Inertia visits and #anchor links would be counted twice
+    // and never match the server's PageView. We track PageView ourselves.
+    window.fbq.disablePushState = true;
     window.fbq('init', pixelId);
     initialised = pixelId;
 
