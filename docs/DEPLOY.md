@@ -114,12 +114,12 @@ Conversions API**, enter the Pixel (dataset) ID and a Conversions API access
 token (stored encrypted), optionally a test event code, and press **Send test
 event**. From then on:
 
-| Event       | Browser | Server | When                                          |
-| ----------- | ------- | ------ | --------------------------------------------- |
+| Event       | Browser | Server | When                                                |
+| ----------- | ------- | ------ | --------------------------------------------------- |
 | `PageView`  | yes     | yes    | home, terms, privacy (same event id → counted once) |
-| `Lead`      | yes     | yes    | the free-demo form is sent (saved under **Leads**) |
-| `Contact`   | yes     | —      | a call or WhatsApp button is tapped           |
-| `Subscribe` | —       | yes    | you confirm a paid invoice (value in BDT)      |
+| `Lead`      | yes     | yes    | the free-demo form is sent (saved under **Leads**)  |
+| `Contact`   | yes     | —      | a call or WhatsApp button is tapped                 |
+| `Subscribe` | —       | yes    | you confirm a paid invoice (value in BDT)           |
 
 Phone, email and name are SHA-256 hashed before they leave the server. The
 Pixel only runs on the public pages, never in the company panel or the app.
