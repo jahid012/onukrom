@@ -109,7 +109,10 @@ export default function PricingIndex() {
             align: 'right',
             cell: (p) => {
                 const diff =
-                    ((priceFor(state, list.id, p) - p.price) / p.price) * 100;
+                    p.price > 0
+                        ? ((priceFor(state, list.id, p) - p.price) / p.price) *
+                          100
+                        : 0;
 
                 return Math.abs(diff) < 0.05 ? (
                     <span className="text-muted-foreground">—</span>

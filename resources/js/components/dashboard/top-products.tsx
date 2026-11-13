@@ -40,7 +40,7 @@ export function TopProducts({ products }: { products: TopProduct[] }) {
                                     <div
                                         className="h-full rounded-full bg-chart-1 transition-opacity group-hover:opacity-80"
                                         style={{
-                                            width: `${(p.sales / max) * 100}%`,
+                                            width: `${max > 0 ? (p.sales / max) * 100 : 0}%`,
                                         }}
                                     />
                                 </div>

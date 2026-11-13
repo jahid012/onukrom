@@ -1,38 +1,234 @@
 {
-    "title": "Onukrom — sales & distribution app",
-    "metaDescription": "Orders, deliveries, collections and stock for distributors in Bangladesh: an app for your field team and a panel for your office.",
+    "title": "Onukrom — sales & distribution app for Bangladesh",
+    "metaDescription": "Orders, deliveries, collections and stock for distributors in Bangladesh: an Android app for your field team and a panel for your office.",
+    "announce": "New: guided setup and bKash / Nagad billing — try it free for 14 days",
+    "nav": {
+        "features": "Features",
+        "app": "Field app",
+        "pricing": "Pricing",
+        "faq": "FAQ"
+    },
     "login": "Log in",
     "openPanel": "Open your panel",
-    "start": "Get started",
+    "startFree": "Start free",
+    "talk": "Talk to us",
+    "eyebrow": "For distributors in Bangladesh",
     "headline": "Your field team and office, on one screen",
-    "subline": "Sales reps take orders on the app, delivery men deliver and collect, the office sees everything live.",
-    "facts": {
-        "app": {
-            "title": "Android app for the field",
-            "text": "Orders, new shops, deliveries and payments — in Bangla."
-        },
-        "offline": {
-            "title": "Works without internet",
-            "text": "Saved on the phone, sent when the network is back."
-        },
-        "pdf": {
-            "title": "Reports & PDF",
-            "text": "Sales, dues and stock as charts, PDF or Excel."
-        }
+    "subline": "Sales reps take orders on the app, delivery men deliver and collect, and the office sees every taka and every carton live.",
+    "trust": {
+        "trial": "14 days free",
+        "bangla": "Bangla & English",
+        "offline": "Works without internet"
     },
-    "galleryTitle": "See it before you start",
     "shots": {
         "dashboard": "Today’s sales, collections and dues at a glance",
-        "orders": "Approve orders that arrive from the app",
+        "orders": "Orders from the app, ready to approve",
         "reports": "Charts and PDF reports",
-        "areas": "Routes, visit days and who covers them",
-        "stock": "Stock in every godown and van",
         "app": "The Onukrom app"
     },
-    "appTitle": "The app your team carries",
-    "appText": "Simple, big buttons, Bangla first — made for the market, not the office.",
-    "pricesTitle": "Simple monthly prices",
-    "pricesText": "Every plan has every feature. 14 days free.",
-    "month": "month",
-    "staffUpTo": "Up to {{n}} staff"
+    "rolesTitle": "One system for everyone in your business",
+    "roles": {
+        "owner": "Owner",
+        "manager": "Manager",
+        "sr": "Sales rep",
+        "dm": "Delivery man",
+        "accounts": "Accounts"
+    },
+    "panel": {
+        "eyebrow": "Office panel",
+        "title": "Run the whole day from one panel",
+        "text": "Orders arrive from the field the moment they are taken. Approve, send out, and collect — no phone calls, no paper.",
+        "approve": {
+            "title": "Approve in seconds",
+            "text": "See the shop, the items, the GPS check and the credit limit before you say yes."
+        },
+        "deliver": {
+            "title": "Plan every trip",
+            "text": "Load approved orders onto a delivery man’s trip and follow it live."
+        },
+        "collect": {
+            "title": "Count every taka",
+            "text": "Cash, bKash, Nagad and bank — collected, deposited and confirmed."
+        }
+    },
+    "field": {
+        "eyebrow": "Field app",
+        "title": "Everything your field team does, in their pocket",
+        "text": "Big buttons, Bangla first, made for the market — not the office.",
+        "cards": {
+            "order": {
+                "title": "Take an order in a minute",
+                "text": "Cartons and pieces, the right price for each shop."
+            },
+            "shops": {
+                "title": "Find or add the shop",
+                "text": "Nearest shops first; new shops with GPS."
+            },
+            "trip": {
+                "title": "Deliver and collect",
+                "text": "Delivered, partial or failed — and the cash taken."
+            },
+            "offline": {
+                "title": "No network? No problem",
+                "text": "Saved on the phone, sent when you pull to refresh."
+            },
+            "home": {
+                "title": "The day at a glance",
+                "text": "Today’s orders, sales and deliveries left."
+            }
+        }
+    },
+    "reports": {
+        "eyebrow": "Reports",
+        "title": "Know where every taka is",
+        "charts": {
+            "title": "Charts that answer questions",
+            "text": "Sales trend, sales by sales rep and route, collections by method."
+        },
+        "pdf": {
+            "title": "PDF and Excel in one click",
+            "text": "Print the whole report or any list — Bangla prints correctly."
+        },
+        "dues": {
+            "title": "Dues by age",
+            "text": "Which shops owe, and for how long since their last order."
+        },
+        "chip": "Download PDF"
+    },
+    "grid": {
+        "eyebrow": "Built in",
+        "title": "Everything a distributor needs",
+        "text": "No add-ons, no extra apps. Every plan has every feature.",
+        "items": {
+            "collections": {
+                "title": "Collections & deposits",
+                "text": "Confirm payments and the cash your staff hand in."
+            },
+            "deliveries": {
+                "title": "Trips & deliveries",
+                "text": "Who carries what, and what came back."
+            },
+            "stock": {
+                "title": "Stock in every store",
+                "text": "Godown, vans and damage store; low-stock alerts."
+            },
+            "pricing": {
+                "title": "Price lists",
+                "text": "Wholesale, pharmacy or area prices, with history."
+            },
+            "areas": {
+                "title": "Areas & routes",
+                "text": "Visit days and who covers each route."
+            },
+            "staff": {
+                "title": "Staff & roles",
+                "text": "Invite by phone number; decide who may do what."
+            }
+        }
+    },
+    "gps": {
+        "eyebrow": "Live location",
+        "title": "Every order checked against the shop’s location",
+        "text": "Orders far from the shop, fake GPS or a weak signal are flagged for the office — so you can trust what comes in.",
+        "cardTitle": "Order checks",
+        "flags": {
+            "far": "Far from the shop",
+            "mock": "Fake GPS app",
+            "accuracy": "Weak GPS signal"
+        },
+        "flagged": "Flagged"
+    },
+    "control": {
+        "eyebrow": "Control",
+        "title": "Built for owners who want control",
+        "items": {
+            "roles": {
+                "title": "Roles & permissions",
+                "text": "Owner, manager, sales rep, delivery man — or your own roles."
+            },
+            "device": {
+                "title": "One phone per staff",
+                "text": "Sign a lost phone out from the office."
+            },
+            "gps": {
+                "title": "GPS on every order",
+                "text": "Location checks the office can see."
+            },
+            "offline": {
+                "title": "Offline first",
+                "text": "Work keeps going when the network does not."
+            }
+        }
+    },
+    "steps": {
+        "eyebrow": "How it works",
+        "title": "Ready in an afternoon",
+        "items": {
+            "company": {
+                "title": "Create your company",
+                "text": "Log in to the panel. A guide shows each step."
+            },
+            "setup": {
+                "title": "Add routes, products, staff",
+                "text": "Invite sales reps and delivery men by phone number."
+            },
+            "orders": {
+                "title": "Take orders",
+                "text": "Your team installs the app and starts the same day."
+            }
+        }
+    },
+    "pricing": {
+        "eyebrow": "Pricing",
+        "title": "Simple monthly prices",
+        "text": "Every plan has every feature. 14 days free, then pay by bKash, Nagad or bank.",
+        "popular": "Most chosen",
+        "month": "month",
+        "staff": "Up to {{n}} staff",
+        "app": "Android app for the field",
+        "reports": "Reports, PDF & Excel",
+        "support": "Help in Bangla"
+    },
+    "faq": {
+        "eyebrow": "Questions",
+        "title": "Good to know",
+        "items": {
+            "trial": {
+                "q": "Is there a free trial?",
+                "a": "Yes — 14 days with everything included. Your first invoice appears a week before the trial ends."
+            },
+            "internet": {
+                "q": "What if there is no internet in the market?",
+                "a": "The app keeps orders, deliveries and payments on the phone and sends them when the network is back. Pull down on the screen to send them right away."
+            },
+            "phones": {
+                "q": "Which phones does the app work on?",
+                "a": "Android phones. The office uses the panel in any browser — computer or phone."
+            },
+            "pay": {
+                "q": "How do I pay?",
+                "a": "By bKash, Nagad, Rocket or bank transfer. Enter the transaction ID on the Billing page and we confirm it."
+            },
+            "data": {
+                "q": "Is my data separate from other companies?",
+                "a": "Yes. Every company only ever sees its own shops, orders, prices and staff."
+            },
+            "help": {
+                "q": "Who helps us get started?",
+                "a": "A guide inside the panel shows every step, and you can ask our team from Help & support in Bangla or English."
+            }
+        }
+    },
+    "final": {
+        "title": "Start taking orders this week",
+        "text": "Set up your company today; your team can take orders from the app tomorrow."
+    },
+    "footer": {
+        "about": "Sales and distribution software for Bangladesh.",
+        "product": "Product",
+        "account": "Account",
+        "contact": "Contact",
+        "bangladesh": "Dhaka, Bangladesh",
+        "made": "Made in Bangladesh"
+    }
 }

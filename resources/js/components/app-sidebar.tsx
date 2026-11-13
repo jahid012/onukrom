@@ -250,7 +250,9 @@ function Usage({
             <div className="h-1 rounded-full bg-muted">
                 <div
                     className="h-full rounded-full bg-primary"
-                    style={{ width: `${Math.min(100, (used / limit) * 100)}%` }}
+                    style={{
+                        width: `${limit > 0 ? Math.min(100, (used / limit) * 100) : 0}%`,
+                    }}
                 />
             </div>
         </div>

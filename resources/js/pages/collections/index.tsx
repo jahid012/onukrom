@@ -502,7 +502,7 @@ export default function CollectionsIndex() {
                                         <div
                                             key={a.key}
                                             style={{
-                                                width: `${(a.amount / totalDues) * 100}%`,
+                                                width: `${totalDues > 0 ? (a.amount / totalDues) * 100 : 0}%`,
                                                 background: agingColor[a.key],
                                                 borderRadius:
                                                     i === 0

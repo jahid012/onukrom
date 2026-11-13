@@ -1,5 +1,6 @@
 package com.onukrom.app.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
@@ -20,6 +21,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -108,13 +112,21 @@ private fun MainNav(session: SessionState) {
                     HorizontalDivider(color = C.Border)
                     NavigationBar(containerColor = C.Card, tonalElevation = androidx.compose.ui.unit.Dp(0f)) {
                         tabs.forEach { t ->
+                            val selected = current == t.route
                             NavigationBarItem(
-                                selected = current == t.route,
+                                selected = selected,
                                 onClick = { nav.tab(t.route) },
-                                icon = { Icon(t.icon, null) },
+                                // Material's indicator is always a pill; draw a sharp one instead.
+                                icon = {
+                                    androidx.compose.foundation.layout.Box(
+                                        Modifier
+                                            .background(if (selected) C.PrimarySoft else Color.Transparent, RectangleShape)
+                                            .padding(horizontal = 18.dp, vertical = 4.dp),
+                                    ) { Icon(t.icon, null) }
+                                },
                                 label = { Text(t.label, maxLines = 1) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = C.Primary, selectedTextColor = C.Primary, indicatorColor = C.PrimarySoft,
+                                    selectedIconColor = C.Primary, selectedTextColor = C.Primary, indicatorColor = Color.Transparent,
                                     unselectedIconColor = C.Muted, unselectedTextColor = C.Muted,
                                 ),
                             )

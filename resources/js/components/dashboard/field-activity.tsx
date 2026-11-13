@@ -14,8 +14,8 @@ type Props = {
 
 export function FieldActivity(p: Props) {
     const { t, f } = useFormat();
-    const coverage = (p.visited / p.planned) * 100;
-    const strike = (p.ordersFromVisits / p.visited) * 100;
+    const coverage = p.planned > 0 ? (p.visited / p.planned) * 100 : 0;
+    const strike = p.visited > 0 ? (p.ordersFromVisits / p.visited) * 100 : 0;
 
     return (
         <Panel>
