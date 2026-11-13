@@ -1,6 +1,8 @@
 import { Link } from '@inertiajs/react';
 import {
     BarChart3,
+    CreditCard,
+    LifeBuoy,
     LayoutDashboard,
     Map,
     Package,
@@ -36,6 +38,7 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useFormat } from '@/hooks/use-format';
 import { dashboard } from '@/routes';
 import { index as areasIndex } from '@/routes/areas';
+import { index as billingIndex } from '@/routes/billing';
 import { index as collectionsIndex } from '@/routes/collections';
 import { settings as companySettings } from '@/routes/company';
 import { index as deliveriesIndex } from '@/routes/deliveries';
@@ -48,6 +51,7 @@ import { index as rolesIndex } from '@/routes/roles';
 import { index as shopsIndex } from '@/routes/shops';
 import { index as staffIndex } from '@/routes/staff';
 import { index as stockIndex } from '@/routes/stock';
+import { index as supportIndex } from '@/routes/support';
 
 type MenuItem = {
     key: string; // translation key under nav.*
@@ -101,6 +105,13 @@ const menu: MenuGroup[] = [
             { key: 'settings', icon: Settings, href: companySettings() },
         ],
     },
+    {
+        key: 'account',
+        items: [
+            { key: 'billing', icon: CreditCard, href: billingIndex() },
+            { key: 'support', icon: LifeBuoy, href: supportIndex() },
+        ],
+    },
 ];
 
 export function AppSidebar() {
@@ -141,7 +152,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent className="gap-0 py-2">
+            <SidebarContent className="gap-0 py-2" data-tour="sidebar">
                 {menu.map((group) => (
                     <SidebarGroup key={group.key} className="py-1">
                         <SidebarGroupLabel className="h-7 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">

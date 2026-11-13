@@ -41,6 +41,14 @@ class HandleInertiaRequests extends Middleware
             'locale' => app()->getLocale(),
             'auth' => [
                 'user' => $request->user(),
+                // A platform user viewing a company as its owner (see ImpersonationController).
+                'impersonator' => $request->session()->get('impersonator_name'),
+            ],
+            // One-time messages after a form post; `secret` holds a generated password shown once.
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+                'secret' => $request->session()->get('secret'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

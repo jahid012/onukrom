@@ -34,10 +34,6 @@ class AdminState
 {
     public const DEFAULT_LIST = 'default';
 
-    public const STAFF_LIMIT = 25;
-
-    public const SMS_LIMIT = 500;
-
     /** Orders older than this are left out unless still open. */
     private const ORDER_DAYS = 90;
 
@@ -67,6 +63,7 @@ class AdminState
         $tenant = TenantContext::get();
         // Repair a company created without its warehouses / categories.
         CompanySetup::ensureDefaults();
+        $plan = $tenant->currentPlan();
         $users = User::with('roles', 'routes', 'devices')->orderBy('id')->get();
         $this->codes = $users->mapWithKeys(fn (User $u) => [$u->id => $u->employee_code ?? 'U'.$u->id])->all();
         $areas = Area::orderBy('sort')->get();
@@ -195,11 +192,14 @@ class AdminState
             'company' => [
                 'name' => $tenant->name,
                 'code' => $tenant->code,
-                'plan' => 'starter',
+                'plan' => $plan->key,
+                'planName' => $plan->name,
+                'subscription' => $tenant->subscriptionStatus(),
+                'coveredUntil' => $tenant->coveredUntil()?->toDateString(),
                 'staffUsed' => $users->where('status', '!=', 'inactive')->count(),
-                'staffLimit' => self::STAFF_LIMIT,
+                'staffLimit' => $plan->staff_limit,
                 'smsUsed' => SmsMessage::where('created_at', '>=', now()->startOfMonth())->count(),
-                'smsLimit' => self::SMS_LIMIT,
+                'smsLimit' => $plan->sms_limit,
             ],
             'aging' => $this->aging($shops),
             'notifications' => $this->notifications($orders, $shops, $products, $levels, $mainId),

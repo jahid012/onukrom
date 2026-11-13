@@ -1,9 +1,10 @@
-import { Moon, Sun } from 'lucide-react';
+import { CircleHelp, Moon, Sun } from 'lucide-react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { GlobalSearch } from '@/components/global-search';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { NotificationsMenu } from '@/components/notifications-menu';
 import { Button } from '@/components/ui/button';
+import { startTour, useCurrentTour } from '@/components/tour/tour';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useFormat } from '@/hooks/use-format';
@@ -17,6 +18,7 @@ export function AppSidebarHeader({
     const { t } = useFormat();
     const { resolvedAppearance, updateAppearance } = useAppearance();
     const dark = resolvedAppearance === 'dark';
+    const tour = useCurrentTour();
 
     return (
         <header className="no-print sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b bg-card px-4 md:px-6">
@@ -28,6 +30,18 @@ export function AppSidebarHeader({
             <GlobalSearch />
 
             <div className="flex shrink-0 items-center gap-1">
+                {tour && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        data-tour="help-button"
+                        aria-label={t('tour.common.open')}
+                        title={t('tour.common.open')}
+                        onClick={() => startTour(tour)}
+                    >
+                        <CircleHelp className="size-4" />
+                    </Button>
+                )}
                 <LanguageSwitcher compact className="hidden sm:inline-flex" />
                 <Button
                     variant="ghost"

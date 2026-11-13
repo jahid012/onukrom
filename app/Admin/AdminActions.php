@@ -20,6 +20,7 @@ use App\Models\Tenant;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Support\Billing\Billing;
 use App\Support\Permissions;
 use App\Support\Phone;
 use App\Support\Sms;
@@ -549,6 +550,13 @@ class AdminActions
     protected function inviteStaff(array $input): string
     {
         $this->can('staff.manage');
+        $tenant = TenantContext::get();
+        $limit = $tenant->currentPlan()->staff_limit;
+
+        if (Billing::staffUsed($tenant) >= $limit) {
+            throw new AdminError("Your plan allows {$limit} staff. Choose a bigger plan under Billing, or switch someone off first.", 422);
+        }
+
         $phone = Phone::normalize((string) ($input['phone'] ?? ''));
         $code = strtoupper(trim((string) ($input['code'] ?? '')));
 

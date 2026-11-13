@@ -11,6 +11,7 @@ import { OrderPipeline } from '@/components/dashboard/order-pipeline';
 import { SalesTrendChart } from '@/components/dashboard/sales-trend-chart';
 import { ShopHealth } from '@/components/dashboard/shop-health';
 import { TopProducts } from '@/components/dashboard/top-products';
+import { GettingStarted } from '@/components/tour/getting-started';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import type { Period } from '@/data/dashboard';
@@ -104,7 +105,12 @@ export default function Dashboard() {
                 </div>
 
                 {/* KPIs */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <GettingStarted />
+
+                <div
+                    className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+                    data-tour="kpis"
+                >
                     {data?.kpis[period].map((k) => (
                         <KpiCard key={k.key} kpi={k} period={period} />
                     ))}

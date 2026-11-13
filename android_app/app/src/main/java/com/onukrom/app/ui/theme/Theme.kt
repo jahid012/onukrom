@@ -7,33 +7,34 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/* Flat UI: one brand colour, white cards with thin borders, no shadows.
- * Light only — easier to read outdoors in the sun. */
+/* Flat UI: one brand colour (#4264FB), white cards with thin borders, sharp
+ * corners, no shadows. Light only — easier to read outdoors in the sun. */
 object C {
-    val Primary = Color(0xFF0E7C66)
-    val PrimaryDark = Color(0xFF0A5E4E)
-    val PrimarySoft = Color(0xFFE3F2EE)
-    val Bg = Color(0xFFF4F6F5)
+    val Primary = Color(0xFF4264FB)
+    val PrimaryDark = Color(0xFF2A47C7)
+    val PrimarySoft = Color(0xFFECF0FF)
+    val Bg = Color(0xFFF4F6FB)
     val Card = Color.White
-    val Border = Color(0xFFE1E5E3)
-    val Text = Color(0xFF16201D)
-    val Muted = Color(0xFF5E6B67)
-    val Faint = Color(0xFF8A9692)
+    val Border = Color(0xFFDCE1EE)
+    val Text = Color(0xFF141A2E)
+    val Muted = Color(0xFF5A6278)
+    val Faint = Color(0xFF8890A6)
     val Warning = Color(0xFFB86E00)
     val WarningSoft = Color(0xFFFFF3DC)
     val Danger = Color(0xFFC6362D)
     val DangerSoft = Color(0xFFFDE8E6)
-    val Info = Color(0xFF2A78D6)
-    val InfoSoft = Color(0xFFE6F0FC)
-    val Success = Color(0xFF0A8A6C)
-    val SuccessSoft = Color(0xFFE1F5EE)
-    val Neutral = Color(0xFF66706D)
-    val NeutralSoft = Color(0xFFEDF0EF)
+    val Info = Color(0xFF0B83A8)
+    val InfoSoft = Color(0xFFE2F3F9)
+    val Success = Color(0xFF0A8A5C)
+    val SuccessSoft = Color(0xFFE1F5EC)
+    val Neutral = Color(0xFF636A80)
+    val NeutralSoft = Color(0xFFEDEFF5)
 }
 
 private val colors = lightColorScheme(
@@ -74,11 +75,13 @@ private val type = Typography(
     labelSmall = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
 )
 
+/** Sharp corners everywhere: buttons, cards, fields, dialogs, menus. */
 private val shapes = Shapes(
-    extraSmall = androidx.compose.foundation.shape.RoundedCornerShape(6.dp),
-    small = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
-    medium = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
-    large = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+    extraSmall = RoundedCornerShape(0.dp),
+    small = RoundedCornerShape(0.dp),
+    medium = RoundedCornerShape(0.dp),
+    large = RoundedCornerShape(0.dp),
+    extraLarge = RoundedCornerShape(0.dp),
 )
 
 @Composable

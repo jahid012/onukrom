@@ -1,0 +1,38 @@
+{
+    "title": "Onukrom — sales & distribution app",
+    "metaDescription": "Orders, deliveries, collections and stock for distributors in Bangladesh: an app for your field team and a panel for your office.",
+    "login": "Log in",
+    "openPanel": "Open your panel",
+    "start": "Get started",
+    "headline": "Your field team and office, on one screen",
+    "subline": "Sales reps take orders on the app, delivery men deliver and collect, the office sees everything live.",
+    "facts": {
+        "app": {
+            "title": "Android app for the field",
+            "text": "Orders, new shops, deliveries and payments — in Bangla."
+        },
+        "offline": {
+            "title": "Works without internet",
+            "text": "Saved on the phone, sent when the network is back."
+        },
+        "pdf": {
+            "title": "Reports & PDF",
+            "text": "Sales, dues and stock as charts, PDF or Excel."
+        }
+    },
+    "galleryTitle": "See it before you start",
+    "shots": {
+        "dashboard": "Today’s sales, collections and dues at a glance",
+        "orders": "Approve orders that arrive from the app",
+        "reports": "Charts and PDF reports",
+        "areas": "Routes, visit days and who covers them",
+        "stock": "Stock in every godown and van",
+        "app": "The Onukrom app"
+    },
+    "appTitle": "The app your team carries",
+    "appText": "Simple, big buttons, Bangla first — made for the market, not the office.",
+    "pricesTitle": "Simple monthly prices",
+    "pricesText": "Every plan has every feature. 14 days free.",
+    "month": "month",
+    "staffUpTo": "Up to {{n}} staff"
+}

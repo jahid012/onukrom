@@ -23,6 +23,13 @@ class SetLocale
             $locale = config('app.locale');
         }
 
+        // The platform panel is an English-only internal tool (numbers and
+        // dates included); while viewing a company as its owner, the
+        // company's language applies again.
+        if ($request->user()?->isPlatform() && ! $request->session()->has('impersonator_id')) {
+            $locale = 'en';
+        }
+
         App::setLocale($locale);
 
         return $next($request);

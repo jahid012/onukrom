@@ -123,7 +123,7 @@ export default function AreasIndex() {
                 />
 
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-                    <Panel className="lg:col-span-2">
+                    <Panel className="lg:col-span-2" tour="areas-tree">
                         <PanelHeader
                             title={t('areas.treeTitle')}
                             subtitle={t('areas.treeSubtitle')}

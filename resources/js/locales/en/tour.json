@@ -1,0 +1,112 @@
+{
+    "common": {
+        "next": "Next",
+        "back": "Back",
+        "done": "Got it",
+        "skip": "Close guide",
+        "step": "Step {{n}} of {{total}}",
+        "open": "Show the guide for this page",
+        "actionsTitle": "Buttons for this page",
+        "helpTitle": "Need this again?",
+        "help": "Press this question mark any time to replay the guide for the page you are on."
+    },
+    "dashboard": {
+        "welcomeTitle": "Welcome to Onukrom 👋",
+        "welcome": "This short guide shows you around. Use Next to continue, or close it any time.",
+        "setupTitle": "Your setup checklist",
+        "setup": "Do these steps in order. Each “Show me” opens the right page with its own guide. Ticks appear by themselves as you finish.",
+        "menuTitle": "The menu",
+        "menu": "Everything is grouped here: sales (orders, deliveries, money), customers, catalog, your team, and billing & help.",
+        "kpisTitle": "Your numbers",
+        "kpis": "Sales, orders, collections and dues for the period you pick above. Hover a card to see the trend.",
+        "bellTitle": "Notifications",
+        "bell": "Orders to approve, deposits to confirm and low stock show up here. When everything is done, it stays empty."
+    },
+    "orders": {
+        "title": "Orders",
+        "intro": "Orders from your sales reps arrive here, straight from the app.",
+        "actions": "Approve or reject selected orders, and print invoices.",
+        "extraTitle": "Order status",
+        "extra": "Tabs sort orders by step: waiting, approved, on the way, delivered. Start with “Pending”."
+    },
+    "deliveries": {
+        "title": "Deliveries",
+        "intro": "Group approved orders into trips for your delivery men.",
+        "actions": "Create a trip: pick a delivery man and the orders to load."
+    },
+    "collections": {
+        "title": "Collections",
+        "intro": "Money collected in the field — cash, bKash, Nagad, bank.",
+        "actions": "Confirm payments and the cash your staff hand in.",
+        "extraTitle": "Payments & deposits",
+        "extra": "Check digital payments first; then count cash deposits from delivery men."
+    },
+    "returns": {
+        "title": "Returns",
+        "intro": "Goods shops send back. Approve them to put good stock back and reduce the shop’s dues.",
+        "actions": "Approve or reject returns here."
+    },
+    "shops": {
+        "title": "Shops",
+        "intro": "Your customers. Sales reps can add new shops from the app; you approve them here.",
+        "actions": "Add shops, import a list, or move shops to another route.",
+        "extraTitle": "New shops",
+        "extra": "Shops added from the field wait under “Pending approval”."
+    },
+    "areas": {
+        "title": "Areas & routes",
+        "intro": "Your territory: zone → area → route. Each route has visit days, a sales rep and a delivery man.",
+        "actions": "Start with “Add area” — you can create the zone at the same time. Then add routes to it.",
+        "extraTitle": "Your territory",
+        "extra": "Click a route to see its shops and who covers it. The + next to an area adds a route there."
+    },
+    "products": {
+        "title": "Products",
+        "intro": "Everything you sell, with pack size and price.",
+        "actions": "Add a product: name, SKU, pack size (pieces per carton), MRP and your price."
+    },
+    "pricing": {
+        "title": "Pricing",
+        "intro": "Different prices for different shops — wholesale, pharmacy or an area.",
+        "actions": "Create a price list, then change prices one by one or by percent."
+    },
+    "stock": {
+        "title": "Stock",
+        "intro": "How much is in each store, and what is reserved for approved orders.",
+        "actions": "Enter purchases with “Adjust”, and move goods between stores with “Transfer”.",
+        "extraTitle": "Stores",
+        "extra": "Switch between the main godown, vans and the damage store."
+    },
+    "staff": {
+        "title": "Staff",
+        "intro": "Everyone who uses Onukrom: office people and field staff.",
+        "actions": "Invite a sales rep or delivery man with their phone number. Their password appears once — they log in to the app with company code + phone + password."
+    },
+    "roles": {
+        "title": "Roles & permissions",
+        "intro": "What each role is allowed to do.",
+        "actions": "Make a new role from an existing one, then tick what it may do."
+    },
+    "settings": {
+        "title": "Company settings",
+        "intro": "Your company details and the rules for orders and GPS.",
+        "actions": "Save after changing anything."
+    },
+    "reports": {
+        "title": "Reports",
+        "intro": "Charts of sales, dues and collections, and every report as PDF or CSV.",
+        "actions": "Pick a period, or download the whole page as a PDF to share."
+    },
+    "billing": {
+        "title": "Billing",
+        "intro": "Your plan, usage and invoices.",
+        "actions": "Pay an invoice by bKash/Nagad/bank and submit the transaction ID.",
+        "extraTitle": "Plans",
+        "extra": "Need more staff? Switch to a bigger plan here."
+    },
+    "support": {
+        "title": "Help & support",
+        "intro": "Ask the Onukrom team anything; answers come here.",
+        "actions": "Press “Ask a question” to start."
+    }
+}

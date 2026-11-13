@@ -86,6 +86,27 @@ GitHub's logs. Change it after the first login (Settings → Password).
 Where artisan is available (locally, or a cPanel Terminal), the same thing is
 `php artisan onukrom:create-company <code> "<name>" --owner="…" --email=…`.
 
+## Super admin (platform panel)
+
+The platform panel at `/platform` is for Onukrom's own staff: every company,
+"view as owner", plans and prices, invoices to confirm, support tickets, and
+the team. Create the first super admin once, from your PC:
+
+```
+powershell -ExecutionPolicy Bypass -File deploy/create-super-admin.ps1
+```
+
+Use an email that is not a company's login. Sign in at `/login` with it; you
+land in `/platform` (the password is shown once — change it under Settings →
+Password). From **Team** you can then add support staff yourself.
+
+Then open **Settings** in the platform panel and fill in **How to pay** (your
+bKash / Nagad / bank details): owners see it on their Billing page. Plan prices
+are under **Plans & prices** (starting values: Starter ৳1,500, Growth ৳3,500,
+Pro ৳7,500 per month).
+
+Locally: `php artisan onukrom:create-super-admin you@example.com --name="…"`.
+
 ## If a deploy fails half-way
 
 The site stays in maintenance mode on purpose, because half-uploaded code is
@@ -107,6 +128,7 @@ curl -X POST -H "X-Deploy-Token: YOUR_TOKEN" https://onukrom.com/api/_deploy/ref
 | `GET status`               | which vendor build is on the server (`vendor/.lock-hash`), PHP version                                                    |
 | `POST down`                | maintenance mode (the hooks themselves stay reachable)                                                                    |
 | `POST create-company`      | first company + owner login (see above)                                                                                   |
+| `POST create-super-admin`  | Onukrom super admin for the platform panel (see above)                                                                    |
 | `POST refresh[?migrate=1]` | creates missing `storage/` folders, `config:clear`, `migrate --force`, `optimize:clear`, `optimize`, resets OPcache, `up` |
 
 Without the right `X-Deploy-Token` header (or with `DEPLOY_TOKEN` empty) they

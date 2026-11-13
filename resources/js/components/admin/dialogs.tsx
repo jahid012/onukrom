@@ -211,7 +211,7 @@ export function TextInput({
 }: {
     value: string;
     onChange: (value: string) => void;
-    type?: 'text' | 'number' | 'tel';
+    type?: 'text' | 'number' | 'tel' | 'email' | 'date';
     placeholder?: string;
     required?: boolean;
     inputMode?: 'numeric' | 'decimal' | 'tel';

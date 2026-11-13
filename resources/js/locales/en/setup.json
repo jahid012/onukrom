@@ -1,0 +1,33 @@
+{
+    "title": "Getting started",
+    "subtitle": "{{done}} of {{total}} done — follow the steps to start taking orders",
+    "hide": "Hide",
+    "showMe": "Show me",
+    "allDone": "All set! Your team can take orders from the app.",
+    "steps": {
+        "company": {
+            "title": "Company details",
+            "text": "Phone and address for invoices and SMS"
+        },
+        "areas": {
+            "title": "Areas & routes",
+            "text": "Where your sales reps go, and on which days"
+        },
+        "products": {
+            "title": "Products & prices",
+            "text": "What you sell and for how much"
+        },
+        "stock": {
+            "title": "Opening stock",
+            "text": "How much is in the godown today"
+        },
+        "staff": {
+            "title": "Sales rep & delivery man",
+            "text": "Invite them; they log in on the Onukrom app"
+        },
+        "order": {
+            "title": "First order",
+            "text": "A sales rep places one from a shop"
+        }
+    }
+}

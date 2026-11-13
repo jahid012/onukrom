@@ -20,7 +20,8 @@
             "sales": "Sales",
             "customers": "Customers",
             "catalog": "Catalog",
-            "team": "Team"
+            "team": "Team",
+            "account": "Account"
         },
         "dashboard": "Dashboard",
         "reports": "Reports",
@@ -35,7 +36,9 @@
         "stock": "Stock",
         "staff": "Staff",
         "roles": "Roles & permissions",
-        "settings": "Settings"
+        "settings": "Settings",
+        "billing": "Billing",
+        "support": "Help & support"
     },
     "header": {
         "search": "Search shops, orders, staff…",
@@ -49,14 +52,17 @@
             "deposit": "{{name}} handed in cash — confirm the deposit",
             "shop": "{{n}} new shops added from the field",
             "stock": "{{n}} products are low in stock"
-        }
+        },
+        "noNotifications": "No notifications. You are all caught up."
     },
     "plan": {
         "name": "{{plan}} plan",
         "starter": "Starter",
         "code": "Code: {{code}}",
         "staff": "Staff",
-        "sms": "SMS this month"
+        "sms": "SMS this month",
+        "growth": "Growth",
+        "pro": "Pro"
     },
     "user": {
         "settings": "My profile",
@@ -326,5 +332,16 @@
                 "note": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click Regenerate codes above."
             }
         }
+    },
+    "flash": {
+        "secretTitle": "Save this login now",
+        "secretText": "This password is shown only once. Copy it and send it to the person privately.",
+        "copy": "Copy",
+        "copied": "Copied",
+        "done": "I saved it"
+    },
+    "impersonation": {
+        "viewing": "You are viewing the panel as {{name}} ({{who}}). Everything you do is done as them.",
+        "stop": "Back to platform"
     }
 }

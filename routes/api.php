@@ -40,4 +40,5 @@ Route::prefix('_deploy')->group(function () {
     Route::post('down', [DeployController::class, 'down']);
     Route::post('refresh', [DeployController::class, 'refresh']);
     Route::post('create-company', [DeployController::class, 'createCompany']);
+    Route::post('create-super-admin', [DeployController::class, 'createSuperAdmin']);
 });

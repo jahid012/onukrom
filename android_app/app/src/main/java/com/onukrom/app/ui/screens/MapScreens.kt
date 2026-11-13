@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Directions
 import androidx.compose.material.icons.filled.Map
@@ -26,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -104,7 +104,7 @@ fun PinMap(pins: List<Pin>, modifier: Modifier = Modifier, onPin: (Pin) -> Unit 
 fun ShopMiniMap(shop: ShopEntity) {
     val s = LocalStrings.current
     val pins = remember(shop.id) { listOf(Pin(shop.id, shop.lat!!, shop.lng!!, shop.display(s), "", C.Primary)) }
-    Box(Modifier.fillMaxWidth().height(180.dp).clip(RoundedCornerShape(12.dp))) {
+    Box(Modifier.fillMaxWidth().height(180.dp).clip(RectangleShape)) {
         PinMap(pins, Modifier.fillMaxSize())
     }
 }

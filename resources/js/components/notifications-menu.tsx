@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import {
     Bell,
+    BellOff,
     MapPinOff,
     PackageMinus,
     ShoppingCart,
@@ -51,6 +52,7 @@ export function NotificationsMenu() {
                     variant="ghost"
                     size="icon"
                     className="relative"
+                    data-tour="notifications"
                     aria-label={t('header.notifications', { n: f.num(unread) })}
                 >
                     <Bell className="size-4" />
@@ -78,6 +80,14 @@ export function NotificationsMenu() {
                     )}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                {notifications.length === 0 && (
+                    <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
+                        <BellOff className="size-6 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">
+                            {t('header.noNotifications')}
+                        </p>
+                    </div>
+                )}
                 {notifications.map((n) => {
                     const Icon = icons[n.kind];
 

@@ -18,10 +18,17 @@ class DashboardTest extends TestCase
 
     public function test_authenticated_users_can_visit_the_dashboard()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->forCompany()->create();
         $this->actingAs($user);
 
         $response = $this->get(route('dashboard'));
         $response->assertOk();
+    }
+
+    public function test_platform_staff_are_sent_to_their_own_panel(): void
+    {
+        $this->actingAs(User::factory()->platform()->create())
+            ->get(route('dashboard'))
+            ->assertRedirect(route('platform.dashboard'));
     }
 }

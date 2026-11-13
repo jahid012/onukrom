@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\Tenancy\CompanySetup;
+use App\Support\Tenancy\PlatformAdmin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -19,6 +20,7 @@ use Throwable;
  *   POST /api/_deploy/down     maintenance mode while files upload
  *   POST /api/_deploy/refresh  clear + rebuild caches (+ migrate), back online
  *   POST /api/_deploy/create-company  first company + owner login
+ *   POST /api/_deploy/create-super-admin  Onukrom super admin (platform panel)
  */
 class DeployController extends Controller
 {
@@ -69,6 +71,32 @@ class DeployController extends Controller
             'ok' => true,
             'company_code' => $result['tenant']->code,
             'email' => $result['owner']->email,
+            'password' => ($data['password'] ?? null) ? null : $result['password'],
+        ], 201);
+    }
+
+    /**
+     * Super admin for the platform panel, called from your own PC by
+     * deploy/create-super-admin.ps1 so the password only shows in your terminal.
+     */
+    public function createSuperAdmin(Request $request): JsonResponse
+    {
+        $this->authorize($request);
+        $data = $request->validate(PlatformAdmin::rules());
+
+        try {
+            $result = PlatformAdmin::create([
+                'name' => (string) $data['name'],
+                'email' => (string) $data['email'],
+                'password' => isset($data['password']) ? (string) $data['password'] : null,
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['ok' => false, 'error' => $e->getMessage()], 422);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'email' => $result['user']->email,
             'password' => ($data['password'] ?? null) ? null : $result['password'],
         ], 201);
     }

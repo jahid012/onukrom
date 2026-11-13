@@ -56,7 +56,7 @@ class CompanySetup
     }
 
     /**
-     * @param  array{code: string, name: string, phone?: ?string, address?: ?string}  $company
+     * @param  array{code: string, name: string, phone?: ?string, address?: ?string, plan?: string}  $company
      * @param  array{name: string, email: string, phone?: ?string, password?: ?string}  $owner
      * @return array{tenant: Tenant, owner: User, password: string}
      */
@@ -71,6 +71,8 @@ class CompanySetup
                 'phone' => $company['phone'] ?? null,
                 'address' => $company['address'] ?? null,
                 'settings' => Tenant::DEFAULT_SETTINGS,
+                'plan_key' => $company['plan'] ?? 'starter',
+                'trial_ends_at' => now()->addDays(Tenant::TRIAL_DAYS)->toDateString(),
             ]);
 
             $user = TenantContext::run($tenant, function () use ($owner, $password): User {

@@ -13,12 +13,16 @@ import { cn } from '@/lib/utils';
 export function Panel({
     className,
     children,
+    tour,
 }: {
     className?: string;
     children: ReactNode;
+    /** Marks the panel for a page guide step (data-tour). */
+    tour?: string;
 }) {
     return (
         <section
+            data-tour={tour}
             className={cn(
                 'flex min-w-0 flex-col rounded-md border bg-card text-card-foreground',
                 className,

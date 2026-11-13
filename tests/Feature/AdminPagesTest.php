@@ -37,7 +37,7 @@ class AdminPagesTest extends TestCase
     #[DataProvider('pages')]
     public function test_admin_page_renders_for_a_logged_in_user(string $url, string $component): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->forCompany()->create())
             ->get($url)
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component($component));
@@ -57,7 +57,7 @@ class AdminPagesTest extends TestCase
 
     public function test_order_detail_receives_the_order_number(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->forCompany()->create())
             ->get('/orders/SR15-261110-012')
             ->assertInertia(fn (Assert $page) => $page->where('number', 'SR15-261110-012'));
     }

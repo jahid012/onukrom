@@ -24,6 +24,7 @@ export function Tabs<V extends string>({
     return (
         <div
             role="tablist"
+            data-tour="page-tabs"
             className={cn('flex gap-1 overflow-x-auto border-b', className)}
         >
             {items.map((item) => {

@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.DoNotDisturbOn
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -102,29 +101,27 @@ fun ShopsScreen(nav: NavHostController, pickMode: Boolean) {
         actions = {
             if (c.hasMapKey) IconButton(onClick = { nav.navigate(Routes.SHOP_MAP) }) { Icon(Icons.Default.Map, s.mapView) }
         },
-        floating = {
-            if (me?.can("shop.create") == true) {
-                ExtendedFloatingActionButton(
-                    onClick = { nav.navigate(Routes.newShop(forOrder = pickMode)) },
-                    icon = { Icon(Icons.Default.AddBusiness, null) },
-                    text = { Text(s.addShop) },
-                    containerColor = C.Primary,
-                    contentColor = androidx.compose.ui.graphics.Color.White,
-                    elevation = androidx.compose.material3.FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
-                )
-            }
-        },
     ) { pad ->
         Column(Modifier.padding(pad).fillMaxSize()) {
             Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 SearchBox(query, { query = it }, s.searchShops)
+                // Up top, next to the search: a floating button at the bottom
+                // sat over the list and under the phone's gesture bar.
+                if (me?.can("shop.create") == true) {
+                    OutlineButton(
+                        s.addShop,
+                        { nav.navigate(Routes.newShop(forOrder = pickMode)) },
+                        Modifier.fillMaxWidth(),
+                        icon = Icons.Default.AddBusiness,
+                    )
+                }
                 if (routes.size > 1) Chips(listOf<Pair<String?, String>>(null to s.allRoutes) + routes.map { it.id to it.name }, route, { route = it })
             }
             when {
                 shops == null -> Loading()
                 list.isEmpty() -> Empty(Icons.Default.Storefront, s.noShops)
                 else -> LazyColumn(
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 96.dp),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     items(list, key = { it.first.id }) { (shop, distance) ->

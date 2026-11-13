@@ -62,6 +62,9 @@ class DemoSeeder extends Seeder
             'phone' => '01711-000001',
             'address' => 'House 12, Road 3, Mirpur-10, Dhaka',
             'settings' => Tenant::DEFAULT_SETTINGS,
+            // 13 staff: more than Starter allows.
+            'plan_key' => 'growth',
+            'paid_until' => now()->addMonth()->toDateString(),
         ]);
 
         TenantContext::run($tenant, function (): void {

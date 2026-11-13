@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Actions\Fortify\ResetUserPassword;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -39,6 +41,13 @@ class FortifyServiceProvider extends ServiceProvider
     private function configureActions(): void
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+
+        // Switched-off accounts (company staff or platform team) cannot sign in.
+        Fortify::authenticateUsing(function (Request $request): ?User {
+            $user = User::withoutGlobalScope('tenant')->where('email', strtolower((string) $request->input(Fortify::username())))->first();
+
+            return $user && $user->status !== 'inactive' && Hash::check((string) $request->input('password'), $user->password) ? $user : null;
+        });
     }
 
     /**

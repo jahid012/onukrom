@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,7 +26,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -56,11 +56,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,8 +78,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.onukrom.app.LocalContainer
 import com.onukrom.app.i18n.LocalStrings
 import com.onukrom.app.ui.theme.C
+import kotlinx.coroutines.launch
 
 /** App-wide snackbar for short "saved" messages. */
 val LocalSnackbar = staticCompositionLocalOf { SnackbarHostState() }
@@ -125,7 +136,7 @@ fun FlatCard(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = RectangleShape,
         color = color,
         border = BorderStroke(1.dp, border),
         onClick = onClick ?: {},
@@ -149,7 +160,7 @@ fun BigButton(
         onClick = onClick,
         enabled = enabled && !loading,
         modifier = modifier.fillMaxWidth().height(54.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = RectangleShape,
         colors = ButtonDefaults.buttonColors(containerColor = color, disabledContainerColor = C.Border, disabledContentColor = C.Faint),
         elevation = null,
     ) {
@@ -170,7 +181,7 @@ fun OutlineButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.height(50.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = RectangleShape,
         border = BorderStroke(1.dp, if (enabled) color.copy(alpha = .5f) else C.Border),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
     ) {
@@ -193,7 +204,7 @@ enum class Tone(val fg: Color, val bg: Color) {
 @Composable
 fun Badge(text: String, tone: Tone, modifier: Modifier = Modifier, icon: ImageVector? = null) {
     Row(
-        modifier.background(tone.bg, RoundedCornerShape(50)).padding(horizontal = 10.dp, vertical = 3.dp),
+        modifier.background(tone.bg, RectangleShape).padding(horizontal = 10.dp, vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
@@ -231,7 +242,7 @@ private fun StepButton(icon: ImageVector, enabled: Boolean, filled: Boolean = fa
     Box(
         Modifier
             .size(42.dp)
-            .background(if (!enabled) C.NeutralSoft else if (filled) C.Primary else C.PrimarySoft, RoundedCornerShape(10.dp))
+            .background(if (!enabled) C.NeutralSoft else if (filled) C.Primary else C.PrimarySoft, RectangleShape)
             .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -264,7 +275,7 @@ fun Field(
         keyboardOptions = KeyboardOptions(keyboardType = keyboard),
         visualTransformation = visual,
         trailingIcon = trailing,
-        shape = RoundedCornerShape(12.dp),
+        shape = RectangleShape,
         colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = C.Border, focusedContainerColor = C.Card, unfocusedContainerColor = C.Card),
     )
 }
@@ -281,7 +292,7 @@ fun SearchBox(value: String, onChange: (String) -> Unit, placeholder: String, mo
         } else null,
         singleLine = true,
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = RectangleShape,
         colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = C.Border, focusedContainerColor = C.Card, unfocusedContainerColor = C.Card),
     )
 }
@@ -294,8 +305,8 @@ fun <T> Chips(options: List<Pair<T, String>>, selected: T?, onSelect: (T) -> Uni
             val on = value == selected
             Box(
                 Modifier
-                    .background(if (on) C.Primary else C.Card, RoundedCornerShape(50))
-                    .border(1.dp, if (on) C.Primary else C.Border, RoundedCornerShape(50))
+                    .background(if (on) C.Primary else C.Card, RectangleShape)
+                    .border(1.dp, if (on) C.Primary else C.Border, RectangleShape)
                     .clickable { onSelect(value) }
                     .padding(horizontal = 14.dp, vertical = 8.dp),
             ) {
@@ -314,8 +325,8 @@ fun ChoiceList(options: List<Pair<String, String>>, selected: String?, onSelect:
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .background(if (on) C.PrimarySoft else C.Card, RoundedCornerShape(12.dp))
-                    .border(if (on) 2.dp else 1.dp, if (on) C.Primary else C.Border, RoundedCornerShape(12.dp))
+                    .background(if (on) C.PrimarySoft else C.Card, RectangleShape)
+                    .border(if (on) 2.dp else 1.dp, if (on) C.Primary else C.Border, RectangleShape)
                     .clickable { onSelect(value) }
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -334,7 +345,7 @@ fun ChoiceList(options: List<Pair<String, String>>, selected: String?, onSelect:
 @Composable
 fun Empty(icon: ImageVector, text: String, modifier: Modifier = Modifier, action: (@Composable () -> Unit)? = null) {
     Column(modifier.fillMaxWidth().padding(vertical = 48.dp, horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(64.dp).background(C.NeutralSoft, CircleShape), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(64.dp).background(C.NeutralSoft, RectangleShape), contentAlignment = Alignment.Center) {
             Icon(icon, null, Modifier.size(32.dp), tint = C.Faint)
         }
         Spacer(Modifier.height(12.dp))
@@ -369,7 +380,7 @@ fun SectionTitle(text: String, modifier: Modifier = Modifier, trailing: @Composa
 @Composable
 fun Notice(text: String, tone: Tone, icon: ImageVector = Icons.Default.ErrorOutline, action: (@Composable () -> Unit)? = null) {
     Row(
-        Modifier.fillMaxWidth().background(tone.bg, RoundedCornerShape(12.dp)).padding(12.dp),
+        Modifier.fillMaxWidth().background(tone.bg, RectangleShape).padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(icon, null, tint = tone.fg, modifier = Modifier.size(22.dp))
@@ -391,7 +402,7 @@ fun SyncBar(online: Boolean, running: Boolean, pending: Int, failed: Int, lastSy
         else -> Triple(Tone.Success, Icons.Default.CloudDone, s.synced)
     }
     Row(
-        Modifier.fillMaxWidth().background(tone.bg, RoundedCornerShape(12.dp)).clickable(onClick = onOpen).padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 4.dp),
+        Modifier.fillMaxWidth().background(tone.bg, RectangleShape).clickable(onClick = onOpen).padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(icon, null, tint = tone.fg, modifier = Modifier.size(22.dp))
@@ -402,6 +413,64 @@ fun SyncBar(online: Boolean, running: Boolean, pending: Int, failed: Int, lastSy
         }
         if (online && !running) TextButton(onClick = onSync) { Text(s.syncNow, color = tone.fg) }
         if (running) CircularProgressIndicator(Modifier.padding(12.dp).size(20.dp), color = tone.fg, strokeWidth = 2.dp)
+    }
+}
+
+/**
+ * Pull down to send what is waiting and fetch the latest from the server.
+ * Replaces the always-on sync banner; the spinner shows only while pulling.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SyncRefresh(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
+    val c = LocalContainer.current
+    val scope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    val state = rememberPullToRefreshState()
+    PullToRefreshBox(
+        isRefreshing = refreshing,
+        onRefresh = {
+            scope.launch {
+                refreshing = true
+                runCatching { c.sync.run() }
+                refreshing = false
+            }
+        },
+        modifier = modifier,
+        state = state,
+        indicator = {
+            PullToRefreshDefaults.Indicator(
+                state = state,
+                isRefreshing = refreshing,
+                modifier = Modifier.align(Alignment.TopCenter),
+                containerColor = C.Card,
+                color = C.Primary,
+            )
+        },
+        content = content,
+    )
+}
+
+/**
+ * Only when the SR / DM must act: something the server refused, or work
+ * waiting while offline. Everything fine → nothing is shown.
+ */
+@Composable
+fun SyncAlert(online: Boolean, pending: Int, failed: Int, onOpen: () -> Unit) {
+    val s = LocalStrings.current
+    val (tone, icon, text) = when {
+        failed > 0 -> Triple(Tone.Danger, Icons.Default.ErrorOutline, s.failedCount(failed))
+        !online && pending > 0 -> Triple(Tone.Warning, Icons.Default.CloudOff, s.pendingCount(pending) + " · " + s.offline)
+        else -> return
+    }
+    Row(
+        Modifier.fillMaxWidth().background(tone.bg, RectangleShape).border(1.dp, tone.fg.copy(alpha = .3f), RectangleShape)
+            .clickable(onClick = onOpen).padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(icon, null, tint = tone.fg, modifier = Modifier.size(20.dp))
+        Spacer(Modifier.width(10.dp))
+        Text(text, color = tone.fg, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
     }
 }
 
@@ -420,7 +489,7 @@ fun BottomActionBar(content: @Composable RowScope.() -> Unit) {
 
 @Composable
 fun Avatar(text: String, size: Dp = 44.dp, color: Color = C.PrimarySoft, fg: Color = C.Primary) {
-    Box(Modifier.size(size).background(color, CircleShape), contentAlignment = Alignment.Center) {
+    Box(Modifier.size(size).background(color, RectangleShape), contentAlignment = Alignment.Center) {
         Text(text.trim().take(1).uppercase(), color = fg, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
     }
 }

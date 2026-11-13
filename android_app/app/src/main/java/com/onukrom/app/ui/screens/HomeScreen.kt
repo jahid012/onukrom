@@ -37,11 +37,11 @@ import com.onukrom.app.ui.components.BigButton
 import com.onukrom.app.ui.components.Badge
 import com.onukrom.app.ui.components.FlatCard
 import com.onukrom.app.ui.components.SectionTitle
-import com.onukrom.app.ui.components.SyncBar
+import com.onukrom.app.ui.components.SyncAlert
+import com.onukrom.app.ui.components.SyncRefresh
 import com.onukrom.app.ui.components.Tone
 import com.onukrom.app.ui.tab
 import com.onukrom.app.ui.theme.C
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(nav: NavHostController, session: SessionState) {
@@ -50,7 +50,6 @@ fun HomeScreen(nav: NavHostController, session: SessionState) {
     val f = s.fmt
     val me = session.me!!
     val sync = rememberSyncUi()
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
 
     val orders by c.repo.dao.orders().collectAsState(initial = emptyList())
     val routes by c.repo.dao.routes().collectAsState(initial = emptyList())
@@ -62,8 +61,9 @@ fun HomeScreen(nav: NavHostController, session: SessionState) {
     val todayRoutes = routes.filter { todayKey() in it.visitDays.split(",") }
     val openStops = stops.filter { it.status == "dispatched" || it.status == "approved" }
 
+    SyncRefresh(Modifier.fillMaxSize().statusBarsPadding()) {
     LazyColumn(
-        Modifier.fillMaxSize().statusBarsPadding(),
+        Modifier.fillMaxSize(),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -77,11 +77,7 @@ fun HomeScreen(nav: NavHostController, session: SessionState) {
                 }
             }
         }
-        item {
-            SyncBar(sync.online, sync.running, sync.pending, sync.failed, sync.lastSyncAt,
-                onSync = { scope.launch { runCatching { c.sync.run() } } },
-                onOpen = { nav.navigate(Routes.SYNC) })
-        }
+        item { SyncAlert(sync.online, sync.pending, sync.failed, onOpen = { nav.navigate(Routes.SYNC) }) }
 
         if (me.isSales) {
             item {
@@ -125,6 +121,7 @@ fun HomeScreen(nav: NavHostController, session: SessionState) {
             items(orders.take(5), key = { it.id }) { o -> OrderRow(o) { nav.navigate(Routes.orderDetail(o.id)) } }
         }
         item { Spacer(Modifier.height(8.dp)) }
+    }
     }
 }
 

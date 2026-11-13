@@ -20,6 +20,7 @@ use Laravel\Sanctum\HasApiTokens;
  *
  * @property positive-int $id
  * @property int|null $tenant_id
+ * @property string|null $platform_role super_admin | support (Onukrom staff, no company)
  * @property string $name
  * @property string|null $phone
  * @property string|null $employee_code
@@ -82,6 +83,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function permissions(): array
     {
         return array_values($this->roles->flatMap(fn (Role $r) => $r->permissions)->unique()->all());
+    }
+
+    /** Onukrom's own staff (super admin / support): no company. */
+    public function isPlatform(): bool
+    {
+        return $this->platform_role !== null && $this->tenant_id === null;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->isPlatform() && $this->platform_role === 'super_admin';
+    }
+
+    public function isOwner(): bool
+    {
+        return in_array('owner', $this->roleKeys(), true);
     }
 
     public function hasPermission(string $permission): bool

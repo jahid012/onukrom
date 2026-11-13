@@ -65,7 +65,8 @@ import com.onukrom.app.ui.components.OutlineButton
 import com.onukrom.app.ui.components.Screen
 import com.onukrom.app.ui.components.SectionTitle
 import com.onukrom.app.ui.components.Stepper
-import com.onukrom.app.ui.components.SyncBar
+import com.onukrom.app.ui.components.SyncAlert
+import com.onukrom.app.ui.components.SyncRefresh
 import com.onukrom.app.ui.components.Tone
 import com.onukrom.app.ui.components.orderTone
 import com.onukrom.app.ui.theme.C
@@ -88,14 +89,11 @@ fun TripsScreen(nav: NavHostController) {
     val trips by c.repo.dao.trips().collectAsState(initial = null)
     val stops by c.repo.dao.allStops().collectAsState(initial = emptyList())
     val sync = rememberSyncUi()
-    val scope = rememberCoroutineScope()
 
     Screen(title = s.myTrips) { pad ->
-        LazyColumn(Modifier.padding(pad).fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            item {
-                SyncBar(sync.online, sync.running, sync.pending, sync.failed, sync.lastSyncAt,
-                    onSync = { scope.launch { runCatching { c.sync.run() } } }, onOpen = { nav.navigate(Routes.SYNC) })
-            }
+        SyncRefresh(Modifier.padding(pad).fillMaxSize()) {
+        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            item { SyncAlert(sync.online, sync.pending, sync.failed, onOpen = { nav.navigate(Routes.SYNC) }) }
             val list = trips
             when {
                 list == null -> item { Loading() }
@@ -119,6 +117,7 @@ fun TripsScreen(nav: NavHostController) {
                     }
                 }
             }
+        }
         }
     }
 }

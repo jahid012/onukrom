@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsurePlatformUser;
+use App\Http\Middleware\EnsureTenantUser;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocale;
@@ -22,6 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // The deploy pipeline must reach these while the site is in maintenance mode.
         $middleware->preventRequestsDuringMaintenance(except: ['api/_deploy/*']);
+
+        $middleware->alias([
+            'tenant' => EnsureTenantUser::class,
+            'platform' => EnsurePlatformUser::class,
+        ]);
 
         $middleware->web(append: [
             SetLocale::class,

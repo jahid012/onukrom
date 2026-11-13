@@ -1,0 +1,28 @@
+{
+    "title": "Help & support",
+    "description": "Ask the Onukrom team anything. We answer here, usually within a working day.",
+    "new": "Ask a question",
+    "newText": "Tell us what you need. Add order numbers or staff codes if it is about them.",
+    "callUs": "Urgent? Call {{phone}}",
+    "empty": "No questions yet. Stuck on something? Ask us — we are happy to help.",
+    "category": "About",
+    "categories": {
+        "how_to": "How do I…",
+        "technical": "Something is not working",
+        "billing": "Billing & payment",
+        "other": "Other"
+    },
+    "subject": "Subject",
+    "message": "Message",
+    "messageHint": "What happened, and what did you expect?",
+    "send": "Send",
+    "back": "All questions",
+    "solved": "Mark solved",
+    "replyHint": "Write a reply…",
+    "closedHint": "This question is closed. Writing again opens it.",
+    "status": {
+        "open": "Waiting for Onukrom",
+        "answered": "Answered",
+        "closed": "Closed"
+    }
+}
