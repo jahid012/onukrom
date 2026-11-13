@@ -107,6 +107,24 @@ Pro ৳7,500 per month).
 
 Locally: `php artisan onukrom:create-super-admin you@example.com --name="…"`.
 
+## Meta Pixel & Conversions API
+
+No `.env` change is needed. In the platform panel → **Settings → Meta Pixel &
+Conversions API**, enter the Pixel (dataset) ID and a Conversions API access
+token (stored encrypted), optionally a test event code, and press **Send test
+event**. From then on:
+
+| Event       | Browser | Server | When                                          |
+| ----------- | ------- | ------ | --------------------------------------------- |
+| `PageView`  | yes     | yes    | home, terms, privacy (same event id → counted once) |
+| `Lead`      | yes     | yes    | the free-demo form is sent (saved under **Leads**) |
+| `Contact`   | yes     | —      | a call or WhatsApp button is tapped           |
+| `Subscribe` | —       | yes    | you confirm a paid invoice (value in BDT)      |
+
+Phone, email and name are SHA-256 hashed before they leave the server. The
+Pixel only runs on the public pages, never in the company panel or the app.
+Clear the test event code once the events show up correctly.
+
 ## If a deploy fails half-way
 
 The site stays in maintenance mode on purpose, because half-uploaded code is

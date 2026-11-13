@@ -3,25 +3,16 @@
 use App\Http\Controllers\AdminDataController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\PublicController;
 use App\Http\Controllers\SupportController;
-use App\Models\Plan;
-use App\Models\PlatformSetting;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Public home page (pictures of the app and panel; sign-in from there).
-Route::get('/', function () {
-    // Phone screenshots are optional: show only the ones that exist.
-    $shots = collect(glob(public_path('images/home/app-*.webp')) ?: [])
-        ->map(fn (string $f) => '/images/home/'.basename($f))->sort()->values();
-
-    return Inertia::render('welcome', [
-        'appShots' => $shots,
-        'plans' => Plan::where('is_active', true)->orderBy('sort')->get()
-            ->map(fn (Plan $p) => ['key' => $p->key, 'name' => $p->name, 'name_bn' => $p->name_bn, 'price' => $p->price / 100, 'staffLimit' => $p->staff_limit]),
-        'supportPhone' => PlatformSetting::get('support_phone', ''),
-    ]);
-})->name('home');
+// Public site: home page, legal pages, and the demo-request form.
+Route::get('/', [PublicController::class, 'home'])->name('home');
+Route::get('terms', [PublicController::class, 'terms'])->name('terms');
+Route::get('privacy', [PublicController::class, 'privacy'])->name('privacy');
+Route::post('demo-request', [PublicController::class, 'lead'])->middleware('throttle:5,10')->name('lead.store');
 
 Route::post('locale', [LocaleController::class, 'update'])->name('locale.update');
 

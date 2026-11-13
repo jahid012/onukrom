@@ -3,6 +3,7 @@
 use App\Http\Controllers\Platform\BillingAdminController;
 use App\Http\Controllers\Platform\CompanyController;
 use App\Http\Controllers\Platform\ImpersonationController;
+use App\Http\Controllers\Platform\LeadController;
 use App\Http\Controllers\Platform\SupportDeskController;
 use App\Http\Controllers\Platform\TeamController;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,9 @@ Route::middleware(['auth', 'verified', 'platform'])->prefix('platform')->name('p
     Route::get('companies', [CompanyController::class, 'index'])->name('companies.index');
     Route::get('companies/{tenant}', [CompanyController::class, 'show'])->name('companies.show');
     Route::post('companies/{tenant}/impersonate', [ImpersonationController::class, 'start'])->name('companies.impersonate');
+
+    Route::get('leads', [LeadController::class, 'index'])->name('leads.index');
+    Route::post('leads/{lead}', [LeadController::class, 'update'])->name('leads.update');
 
     Route::get('support', [SupportDeskController::class, 'index'])->name('support.index');
     Route::get('support/{ticket}', [SupportDeskController::class, 'show'])->name('support.show');
@@ -44,6 +48,7 @@ Route::middleware(['auth', 'verified', 'platform'])->prefix('platform')->name('p
 
         Route::get('settings', [BillingAdminController::class, 'settings'])->name('settings');
         Route::post('settings', [BillingAdminController::class, 'saveSettings'])->name('settings.update');
+        Route::post('settings/meta-test', [BillingAdminController::class, 'testMeta'])->name('settings.metaTest');
     });
 });
 

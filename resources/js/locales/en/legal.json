@@ -1,0 +1,170 @@
+{
+    "updated": "Last updated: {{date}}",
+    "date": "14 November 2026",
+    "noEmail": "the email shown on our website",
+    "noPhone": "the phone number shown on our website",
+    "noAddress": "Dhaka, Bangladesh",
+    "terms": {
+        "title": "Terms & conditions",
+        "intro": "These terms apply when your business uses Onukrom, the web panel and Android app provided by {{legalName}}. By creating an account or using the service you agree to them.",
+        "sections": [
+            {
+                "h": "The service",
+                "p": [
+                    "Onukrom helps distributors manage orders, deliveries, collections, stock, shops, staff and reports. It consists of a web panel for the office and an Android app for sales reps and delivery men."
+                ]
+            },
+            {
+                "h": "Accounts and access",
+                "p": [
+                    "The company owner is responsible for the company account and for every staff account created in it, including who is invited, what roles they have and switching off people who leave.",
+                    "Keep passwords private. Tell us at once if you think an account has been misused."
+                ]
+            },
+            {
+                "h": "Free trial, plans and payment",
+                "p": [
+                    "New companies get a 14-day free trial with all features. After that the service is billed monthly at the price of your plan, shown on the Billing page.",
+                    "You pay by bKash, Nagad, Rocket or bank transfer and enter the transaction ID in the panel. An invoice is paid once we have confirmed the money.",
+                    "We may change prices with at least 30 days’ notice; a change applies from your next invoice."
+                ]
+            },
+            {
+                "h": "Late payment and suspension",
+                "p": [
+                    "If an invoice is not paid after its due date we may pause the company’s access. While paused, the Billing and Support pages stay open so you can pay or ask for help, and your data is kept."
+                ]
+            },
+            {
+                "h": "Your data",
+                "p": [
+                    "Your business data — shops, orders, prices, stock, payments and staff — belongs to you. You let us store and process it only to provide and support the service.",
+                    "You are responsible for collecting information about your staff and customers lawfully, including telling your staff that the app records their location while they work."
+                ]
+            },
+            {
+                "h": "Acceptable use",
+                "p": [
+                    "Do not use Onukrom for anything illegal, try to break or overload it, copy or resell it, or access another company’s data. We may suspend accounts that do."
+                ]
+            },
+            {
+                "h": "Availability and changes",
+                "p": [
+                    "We work to keep Onukrom available but cannot promise it will never be interrupted, for example during maintenance or network problems. The app keeps working offline and sends data when the connection returns.",
+                    "We improve the service over time and may change or remove features; we will tell you about important changes in advance."
+                ]
+            },
+            {
+                "h": "Support",
+                "p": [
+                    "Help is available from Help & support inside the panel and by phone at {{phone}}."
+                ]
+            },
+            {
+                "h": "Ending the service",
+                "p": [
+                    "You can stop at any time by not paying the next invoice or telling us. Before you leave, download the reports you need. We may delete a closed company’s data 90 days after the account ends."
+                ]
+            },
+            {
+                "h": "Liability",
+                "p": [
+                    "The service is provided “as is”. We are not responsible for indirect losses such as lost profit. Our total liability for any claim is limited to the fees you paid us in the 3 months before it."
+                ]
+            },
+            {
+                "h": "Changes to these terms",
+                "p": [
+                    "We may update these terms. We will show the new date on this page and, for important changes, tell you in the panel. Using Onukrom after a change means you accept it."
+                ]
+            },
+            {
+                "h": "Law",
+                "p": [
+                    "These terms are governed by the laws of Bangladesh, and the courts of Dhaka have jurisdiction."
+                ]
+            },
+            {
+                "h": "Contact",
+                "p": ["{{legalName}} · {{address}} · {{email}} · {{phone}}"]
+            }
+        ]
+    },
+    "privacy": {
+        "title": "Privacy policy",
+        "intro": "This policy explains what information {{legalName}} collects through the Onukrom website, web panel and Android app, why, and what choices you have.",
+        "sections": [
+            {
+                "h": "Who we are",
+                "p": [
+                    "{{legalName}} runs Onukrom. For our website and demo requests we decide how data is used. For the business data a company enters in Onukrom, we process it on behalf of that company."
+                ]
+            },
+            {
+                "h": "What we collect",
+                "p": [
+                    "Website visitors: what you enter in the demo form (name, mobile number, business name, team size), and technical data such as IP address, browser and pages visited, including through cookies.",
+                    "Company accounts: names, mobile numbers, emails and roles of the owner and staff.",
+                    "Business data: shops, orders, prices, stock, deliveries, payments and notes that a company enters.",
+                    "From the app: the device’s location when an order, visit, delivery or payment is recorded (and during duty hours if the company turns that on), plus device model and app version."
+                ]
+            },
+            {
+                "h": "How we use it",
+                "p": [
+                    "To provide, secure and support the service; to bill companies; to check order locations against shops; to call people who asked for a demo; and to measure and improve our advertising."
+                ]
+            },
+            {
+                "h": "Meta Pixel and Conversions API",
+                "p": [
+                    "Our public website (home page and these legal pages) uses the Meta Pixel. We also send some of the same events to Meta from our server: page views, demo requests and subscription payments.",
+                    "Before sending, personal details such as mobile number, email and name are converted with a one-way SHA-256 hash, as Meta requires. Meta uses this to measure and improve our ads.",
+                    "The Pixel is not used inside the company panel or the mobile app. You can limit it by blocking cookies in your browser or through your Facebook ad settings."
+                ]
+            },
+            {
+                "h": "Who we share it with",
+                "p": [
+                    "We do not sell personal data. We share it only with providers that help us run Onukrom — hosting, the SMS service that sends logins and notices, and Meta as described above — or when the law requires it.",
+                    "Payments by bKash, Nagad, Rocket or bank are made directly with those providers; we only receive the transaction ID you enter."
+                ]
+            },
+            {
+                "h": "How long we keep it",
+                "p": [
+                    "Company data is kept while the account is active and deleted up to 90 days after it ends, except billing records we must keep by law. Demo requests are kept for up to 24 months."
+                ]
+            },
+            {
+                "h": "Security",
+                "p": [
+                    "Connections use HTTPS, passwords are stored hashed, staff see only what their role allows, and each company sees only its own data. No system is perfectly secure, but we work to protect yours."
+                ]
+            },
+            {
+                "h": "Your choices",
+                "p": [
+                    "You can ask to see, correct or delete your personal data by contacting us. Staff of a company should contact their employer, who manages their account."
+                ]
+            },
+            {
+                "h": "Children",
+                "p": [
+                    "Onukrom is a business service and not meant for anyone under 18."
+                ]
+            },
+            {
+                "h": "Changes to this policy",
+                "p": [
+                    "We may update this policy and will show the new date on this page."
+                ]
+            },
+            {
+                "h": "Contact",
+                "p": ["{{legalName}} · {{address}} · {{email}} · {{phone}}"]
+            }
+        ]
+    }
+}

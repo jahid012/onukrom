@@ -36,6 +36,12 @@ return [
     ],
 
     // Alpha SMS (sms.net.bd) — invites and password resets.
+    // Meta Pixel / Conversions API: pixel id, token and test code are set in
+    // the platform panel (Settings); only the Graph API version lives here.
+    'meta' => [
+        'graph_version' => env('META_GRAPH_VERSION', 'v22.0'),
+    ],
+
     'alpha_sms' => [
         'key' => env('ALPHA_SMS_API_KEY'),
         'sender_id' => env('ALPHA_SMS_SENDER_ID'),

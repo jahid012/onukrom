@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     Building2,
     CreditCard,
+    Inbox,
     LayoutDashboard,
     LifeBuoy,
     Moon,
@@ -36,6 +37,7 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { dashboard, settings as platformSettings } from '@/routes/platform';
 import { index as companiesIndex } from '@/routes/platform/companies';
 import { index as invoicesIndex } from '@/routes/platform/invoices';
+import { index as leadsIndex } from '@/routes/platform/leads';
 import { index as plansIndex } from '@/routes/platform/plans';
 import { index as supportIndex } from '@/routes/platform/support';
 import { index as teamIndex } from '@/routes/platform/team';
@@ -54,6 +56,7 @@ const groups: { label: string; items: Item[] }[] = [
         items: [
             { title: 'Dashboard', icon: LayoutDashboard, href: dashboard() },
             { title: 'Companies', icon: Building2, href: companiesIndex() },
+            { title: 'Leads', icon: Inbox, href: leadsIndex() },
             { title: 'Support', icon: LifeBuoy, href: supportIndex() },
         ],
     },

@@ -20,7 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'locale']);
+        // _fbp / _fbc are set by the Meta Pixel in the browser (not by Laravel).
+        $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'locale', '_fbp', '_fbc']);
 
         // The deploy pipeline must reach these while the site is in maintenance mode.
         $middleware->preventRequestsDuringMaintenance(except: ['api/_deploy/*']);
