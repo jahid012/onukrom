@@ -66,7 +66,6 @@ import com.onukrom.app.ui.components.Screen
 import com.onukrom.app.ui.components.SectionTitle
 import com.onukrom.app.ui.components.Stepper
 import com.onukrom.app.ui.components.SyncAlert
-import com.onukrom.app.ui.components.SyncRefresh
 import com.onukrom.app.ui.components.Tone
 import com.onukrom.app.ui.components.orderTone
 import com.onukrom.app.ui.theme.C
@@ -91,8 +90,7 @@ fun TripsScreen(nav: NavHostController) {
     val sync = rememberSyncUi()
 
     Screen(title = s.myTrips) { pad ->
-        SyncRefresh(Modifier.padding(pad).fillMaxSize()) {
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        LazyColumn(Modifier.padding(pad).fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item { SyncAlert(sync.online, sync.pending, sync.failed, onOpen = { nav.navigate(Routes.SYNC) }) }
             val list = trips
             when {
@@ -117,7 +115,6 @@ fun TripsScreen(nav: NavHostController) {
                     }
                 }
             }
-        }
         }
     }
 }

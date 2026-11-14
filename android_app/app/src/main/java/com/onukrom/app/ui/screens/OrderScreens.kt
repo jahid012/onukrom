@@ -74,7 +74,7 @@ fun OrdersScreen(nav: NavHostController) {
             )
             when {
                 orders == null -> Loading()
-                list.isEmpty() -> Empty(Icons.AutoMirrored.Filled.ReceiptLong, s.noOrders)
+                list.isEmpty() -> Empty(Icons.AutoMirrored.Filled.ReceiptLong, s.noOrders, fill = true)
                 else -> LazyColumn(contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(list, key = { it.id }) { o -> OrderRow(o) { nav.navigate(Routes.orderDetail(o.id)) } }
                 }

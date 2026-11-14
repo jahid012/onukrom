@@ -13,8 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/* Flat UI: one brand colour (#4264FB), white cards with thin borders, sharp
- * corners, no shadows. Light only — easier to read outdoors in the sun. */
+/* Flat UI: one brand colour (#4264FB), white cards with thin borders, softly
+ * rounded corners, no shadows. Light only — easier to read outdoors in the sun. */
 object C {
     val Primary = Color(0xFF4264FB)
     val PrimaryDark = Color(0xFF2A47C7)
@@ -75,13 +75,27 @@ private val type = Typography(
     labelSmall = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
 )
 
-/** Sharp corners everywhere: buttons, cards, fields, dialogs, menus. */
+/** Softly rounded, never pill-shaped: one small set of radii used everywhere. */
+object Corners {
+    /** Badges and tiny tags. */
+    val Small = RoundedCornerShape(6.dp)
+
+    /** Filter chips, the bottom-bar indicator. */
+    val Chip = RoundedCornerShape(8.dp)
+
+    /** Buttons, fields, notices, choice rows. */
+    val Control = RoundedCornerShape(10.dp)
+
+    /** Cards and maps. */
+    val Card = RoundedCornerShape(12.dp)
+}
+
 private val shapes = Shapes(
-    extraSmall = RoundedCornerShape(0.dp),
-    small = RoundedCornerShape(0.dp),
-    medium = RoundedCornerShape(0.dp),
-    large = RoundedCornerShape(0.dp),
-    extraLarge = RoundedCornerShape(0.dp),
+    extraSmall = Corners.Small,
+    small = Corners.Chip,
+    medium = Corners.Card,
+    large = RoundedCornerShape(16.dp),
+    extraLarge = RoundedCornerShape(20.dp),
 )
 
 @Composable

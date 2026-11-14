@@ -119,7 +119,7 @@ fun ShopsScreen(nav: NavHostController, pickMode: Boolean) {
             }
             when {
                 shops == null -> Loading()
-                list.isEmpty() -> Empty(Icons.Default.Storefront, s.noShops)
+                list.isEmpty() -> Empty(Icons.Default.Storefront, s.noShops, fill = true)
                 else -> LazyColumn(
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),

@@ -178,7 +178,7 @@ fun OrderScreen(nav: NavHostController, shopId: String, editId: String?) {
                     }
                 }
                 if (visible.isEmpty()) {
-                    Empty(Icons.Default.Inventory2, s.nothingHere)
+                    Empty(Icons.Default.Inventory2, s.nothingHere, fill = true)
                 } else {
                     LazyColumn(contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         items(visible, key = { it.id }) { p ->

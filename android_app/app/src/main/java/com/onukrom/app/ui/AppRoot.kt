@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -116,11 +115,11 @@ private fun MainNav(session: SessionState) {
                             NavigationBarItem(
                                 selected = selected,
                                 onClick = { nav.tab(t.route) },
-                                // Material's indicator is always a pill; draw a sharp one instead.
+                                // Our own indicator so it matches the rounded cards and buttons.
                                 icon = {
                                     androidx.compose.foundation.layout.Box(
                                         Modifier
-                                            .background(if (selected) C.PrimarySoft else Color.Transparent, RectangleShape)
+                                            .background(if (selected) C.PrimarySoft else Color.Transparent, com.onukrom.app.ui.theme.Corners.Chip)
                                             .padding(horizontal = 18.dp, vertical = 4.dp),
                                     ) { Icon(t.icon, null) }
                                 },

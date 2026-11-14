@@ -1,5 +1,6 @@
 package com.onukrom.app.sync
 
+import android.util.Log
 import androidx.room.withTransaction
 import com.onukrom.app.core.Time
 import com.onukrom.app.data.FlagsSerializer
@@ -63,10 +64,12 @@ class SyncEngine(private val db: AppDatabase, private val api: ApiClient, privat
                 session.setLastSync(System.currentTimeMillis())
                 _status.value = SyncStatus(running = false, finishedAt = System.currentTimeMillis())
             } catch (e: ApiException) {
+                Log.w("OnukromSync", "sync failed: ${e.code} ${e.status} ${e.message}")
                 if (e.isUnauthorized) session.markExpired()
                 _status.value = SyncStatus(running = false, error = e.code)
                 throw e
             } catch (e: Exception) {
+                Log.w("OnukromSync", "sync failed", e)
                 _status.value = SyncStatus(running = false, error = "SERVER")
                 throw e
             }

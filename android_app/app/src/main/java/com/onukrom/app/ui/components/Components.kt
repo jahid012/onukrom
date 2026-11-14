@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -68,8 +69,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -81,6 +82,7 @@ import androidx.compose.ui.unit.dp
 import com.onukrom.app.LocalContainer
 import com.onukrom.app.i18n.LocalStrings
 import com.onukrom.app.ui.theme.C
+import com.onukrom.app.ui.theme.Corners
 import kotlinx.coroutines.launch
 
 /** App-wide snackbar for short "saved" messages. */
@@ -95,6 +97,8 @@ fun Screen(
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     floating: @Composable () -> Unit = {},
+    /** Pull down anywhere on the page to sync with the server (off for the map). */
+    refresh: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -121,7 +125,13 @@ fun Screen(
         },
         bottomBar = bottomBar,
         floatingActionButton = floating,
-        content = content,
+        content = { pad ->
+            if (refresh) {
+                SyncRefresh(Modifier.padding(pad).fillMaxSize()) { content(PaddingValues(0.dp)) }
+            } else {
+                content(pad)
+            }
+        },
     )
 }
 
@@ -136,7 +146,7 @@ fun FlatCard(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = RectangleShape,
+        shape = Corners.Card,
         color = color,
         border = BorderStroke(1.dp, border),
         onClick = onClick ?: {},
@@ -160,7 +170,7 @@ fun BigButton(
         onClick = onClick,
         enabled = enabled && !loading,
         modifier = modifier.fillMaxWidth().height(54.dp),
-        shape = RectangleShape,
+        shape = Corners.Control,
         colors = ButtonDefaults.buttonColors(containerColor = color, disabledContainerColor = C.Border, disabledContentColor = C.Faint),
         elevation = null,
     ) {
@@ -181,7 +191,7 @@ fun OutlineButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.height(50.dp),
-        shape = RectangleShape,
+        shape = Corners.Control,
         border = BorderStroke(1.dp, if (enabled) color.copy(alpha = .5f) else C.Border),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
     ) {
@@ -204,7 +214,7 @@ enum class Tone(val fg: Color, val bg: Color) {
 @Composable
 fun Badge(text: String, tone: Tone, modifier: Modifier = Modifier, icon: ImageVector? = null) {
     Row(
-        modifier.background(tone.bg, RectangleShape).padding(horizontal = 10.dp, vertical = 3.dp),
+        modifier.background(tone.bg, Corners.Small).padding(horizontal = 10.dp, vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
@@ -242,7 +252,7 @@ private fun StepButton(icon: ImageVector, enabled: Boolean, filled: Boolean = fa
     Box(
         Modifier
             .size(42.dp)
-            .background(if (!enabled) C.NeutralSoft else if (filled) C.Primary else C.PrimarySoft, RectangleShape)
+            .clip(Corners.Control).background(if (!enabled) C.NeutralSoft else if (filled) C.Primary else C.PrimarySoft, Corners.Control)
             .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -275,7 +285,7 @@ fun Field(
         keyboardOptions = KeyboardOptions(keyboardType = keyboard),
         visualTransformation = visual,
         trailingIcon = trailing,
-        shape = RectangleShape,
+        shape = Corners.Control,
         colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = C.Border, focusedContainerColor = C.Card, unfocusedContainerColor = C.Card),
     )
 }
@@ -292,7 +302,7 @@ fun SearchBox(value: String, onChange: (String) -> Unit, placeholder: String, mo
         } else null,
         singleLine = true,
         modifier = modifier.fillMaxWidth(),
-        shape = RectangleShape,
+        shape = Corners.Control,
         colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = C.Border, focusedContainerColor = C.Card, unfocusedContainerColor = C.Card),
     )
 }
@@ -305,8 +315,8 @@ fun <T> Chips(options: List<Pair<T, String>>, selected: T?, onSelect: (T) -> Uni
             val on = value == selected
             Box(
                 Modifier
-                    .background(if (on) C.Primary else C.Card, RectangleShape)
-                    .border(1.dp, if (on) C.Primary else C.Border, RectangleShape)
+                    .clip(Corners.Chip).background(if (on) C.Primary else C.Card, Corners.Chip)
+                    .border(1.dp, if (on) C.Primary else C.Border, Corners.Chip)
                     .clickable { onSelect(value) }
                     .padding(horizontal = 14.dp, vertical = 8.dp),
             ) {
@@ -325,8 +335,8 @@ fun ChoiceList(options: List<Pair<String, String>>, selected: String?, onSelect:
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .background(if (on) C.PrimarySoft else C.Card, RectangleShape)
-                    .border(if (on) 2.dp else 1.dp, if (on) C.Primary else C.Border, RectangleShape)
+                    .clip(Corners.Control).background(if (on) C.PrimarySoft else C.Card, Corners.Control)
+                    .border(if (on) 2.dp else 1.dp, if (on) C.Primary else C.Border, Corners.Control)
                     .clickable { onSelect(value) }
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -343,9 +353,11 @@ fun ChoiceList(options: List<Pair<String, String>>, selected: String?, onSelect:
 }
 
 @Composable
-fun Empty(icon: ImageVector, text: String, modifier: Modifier = Modifier, action: (@Composable () -> Unit)? = null) {
-    Column(modifier.fillMaxWidth().padding(vertical = 48.dp, horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(64.dp).background(C.NeutralSoft, RectangleShape), contentAlignment = Alignment.Center) {
+fun Empty(icon: ImageVector, text: String, modifier: Modifier = Modifier, fill: Boolean = false, action: (@Composable () -> Unit)? = null) {
+    // fill = true when it is the whole page body (not inside a list), so pull-to-refresh still works.
+    val outer = if (fill) modifier.fillMaxSize().verticalScroll(rememberScrollState()) else modifier
+    Column(outer.fillMaxWidth().padding(vertical = 48.dp, horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(Modifier.size(64.dp).background(C.NeutralSoft, CircleShape), contentAlignment = Alignment.Center) {
             Icon(icon, null, Modifier.size(32.dp), tint = C.Faint)
         }
         Spacer(Modifier.height(12.dp))
@@ -380,7 +392,7 @@ fun SectionTitle(text: String, modifier: Modifier = Modifier, trailing: @Composa
 @Composable
 fun Notice(text: String, tone: Tone, icon: ImageVector = Icons.Default.ErrorOutline, action: (@Composable () -> Unit)? = null) {
     Row(
-        Modifier.fillMaxWidth().background(tone.bg, RectangleShape).padding(12.dp),
+        Modifier.fillMaxWidth().background(tone.bg, Corners.Control).padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(icon, null, tint = tone.fg, modifier = Modifier.size(22.dp))
@@ -402,7 +414,7 @@ fun SyncBar(online: Boolean, running: Boolean, pending: Int, failed: Int, lastSy
         else -> Triple(Tone.Success, Icons.Default.CloudDone, s.synced)
     }
     Row(
-        Modifier.fillMaxWidth().background(tone.bg, RectangleShape).clickable(onClick = onOpen).padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 4.dp),
+        Modifier.fillMaxWidth().clip(Corners.Control).background(tone.bg, Corners.Control).clickable(onClick = onOpen).padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(icon, null, tint = tone.fg, modifier = Modifier.size(22.dp))
@@ -419,11 +431,14 @@ fun SyncBar(online: Boolean, running: Boolean, pending: Int, failed: Int, lastSy
 /**
  * Pull down to send what is waiting and fetch the latest from the server.
  * Replaces the always-on sync banner; the spinner shows only while pulling.
+ * Built into [Screen], so every page has it.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SyncRefresh(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
     val c = LocalContainer.current
+    val s = LocalStrings.current
+    val snackbar = LocalSnackbar.current
     val scope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     val state = rememberPullToRefreshState()
@@ -432,8 +447,12 @@ fun SyncRefresh(modifier: Modifier = Modifier, content: @Composable BoxScope.() 
         onRefresh = {
             scope.launch {
                 refreshing = true
-                runCatching { c.sync.run() }
+                val ok = c.connectivity.online.value && runCatching { c.sync.run() }.isSuccess
                 refreshing = false
+                if (!ok) {
+                    c.syncSoon() // keeps trying in the background
+                    snackbar.showSnackbar(if (c.connectivity.online.value) s.syncFailed else s.offline)
+                }
             }
         },
         modifier = modifier,
@@ -464,7 +483,7 @@ fun SyncAlert(online: Boolean, pending: Int, failed: Int, onOpen: () -> Unit) {
         else -> return
     }
     Row(
-        Modifier.fillMaxWidth().background(tone.bg, RectangleShape).border(1.dp, tone.fg.copy(alpha = .3f), RectangleShape)
+        Modifier.fillMaxWidth().clip(Corners.Control).background(tone.bg, Corners.Control).border(1.dp, tone.fg.copy(alpha = .3f), Corners.Control)
             .clickable(onClick = onOpen).padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -489,7 +508,7 @@ fun BottomActionBar(content: @Composable RowScope.() -> Unit) {
 
 @Composable
 fun Avatar(text: String, size: Dp = 44.dp, color: Color = C.PrimarySoft, fg: Color = C.Primary) {
-    Box(Modifier.size(size).background(color, RectangleShape), contentAlignment = Alignment.Center) {
+    Box(Modifier.size(size).background(color, CircleShape), contentAlignment = Alignment.Center) {
         Text(text.trim().take(1).uppercase(), color = fg, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
     }
 }

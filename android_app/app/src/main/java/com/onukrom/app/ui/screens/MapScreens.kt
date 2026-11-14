@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -104,7 +103,7 @@ fun PinMap(pins: List<Pin>, modifier: Modifier = Modifier, onPin: (Pin) -> Unit 
 fun ShopMiniMap(shop: ShopEntity) {
     val s = LocalStrings.current
     val pins = remember(shop.id) { listOf(Pin(shop.id, shop.lat!!, shop.lng!!, shop.display(s), "", C.Primary)) }
-    Box(Modifier.fillMaxWidth().height(180.dp).clip(RectangleShape)) {
+    Box(Modifier.fillMaxWidth().height(180.dp).clip(com.onukrom.app.ui.theme.Corners.Card)) {
         PinMap(pins, Modifier.fillMaxSize())
     }
 }
@@ -133,7 +132,7 @@ fun MapScreen(nav: NavHostController, tripId: String?) {
         }
     }
 
-    Screen(title = if (tripId != null) s.showOnMap else s.mapView, onBack = { nav.popBackStack() }) { pad ->
+    Screen(title = if (tripId != null) s.showOnMap else s.mapView, onBack = { nav.popBackStack() }, refresh = false) { pad ->
         Box(Modifier.padding(pad).fillMaxSize()) {
             if (!c.hasMapKey) {
                 Empty(Icons.Default.Map, s.mapKeyMissing)

@@ -81,8 +81,10 @@ class ApiClient(
         response.use { res ->
             val text = res.body.string()
             if (!res.isSuccessful) {
+                // Path and server answer only: never the token or the body we sent.
+                android.util.Log.w("OnukromApi", "${request.method} ${request.url.encodedPath}?${request.url.encodedQuery.orEmpty()} → ${res.code} ${text.take(300)}")
                 val err = runCatching { AppJson.decodeFromString(ApiErrorBody.serializer(), text).error }.getOrNull()
-                throw ApiException(err?.code ?: if (res.code == 401) "UNAUTHENTICATED" else "SERVER", err?.message, res.code)
+                throw ApiException(err?.code ?: if (res.code == 401) "UNAUTHENTICATED" else "SERVER", err?.message ?: "HTTP ${res.code} ${request.url.encodedPath}", res.code)
             }
             try {
                 AppJson.decodeFromString(Envelope.serializer(serializer), text).data

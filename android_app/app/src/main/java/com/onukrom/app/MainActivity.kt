@@ -9,7 +9,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.material3.SnackbarHostState
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.onukrom.app.i18n.Bn
 import com.onukrom.app.i18n.En
 import com.onukrom.app.i18n.LocalStrings
@@ -22,6 +27,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(statusBarStyle = SystemBarStyle.light(android.graphics.Color.WHITE, android.graphics.Color.WHITE))
         val container = (application as OnukromApp).container
+
+        // While the app is on screen: sync when it opens, then every few minutes.
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    container.syncSoon()
+                    delay(FOREGROUND_SYNC_MS)
+                }
+            }
+        }
 
         setContent {
             val session by container.session.state.collectAsStateWithLifecycle()
@@ -36,9 +51,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        val container = (application as OnukromApp).container
-        if (container.session.current.loggedIn) container.syncSoon()
+    private companion object {
+        const val FOREGROUND_SYNC_MS = 5 * 60 * 1000L
     }
 }
